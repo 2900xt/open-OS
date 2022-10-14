@@ -11,6 +11,7 @@ extern word Screen_x;
 extern word Screen_y ;
 extern byte* ScreenBuffer;
 
+
 struct Character{
     byte row1;
     byte row2;
@@ -27,7 +28,7 @@ class VGA{
         Character font[256]; 
     public:
         static void putPixelArray(word x, word y, byte pixelsX){
-            *(ScreenBuffer+((SCREEN_WIDTH/8)*y)+x) = pixelsX;
+            *(ScreenBuffer+((SCREEN_WIDTH/8)*y)+x/8) = pixelsX;
         }
         void addChar(char c,byte r1, byte r2 , byte r3, byte r4, byte r5, byte r6, byte r7, byte r8){
             font[c].row1=r1;
@@ -40,8 +41,13 @@ class VGA{
             font[c].row8=r8; 
         }
         void putChar(char c){
+            word old_y= Screen_y;
             if(font[c].row1 = 0)
-                return;                                             //Undefined Character!
+                return;
+            if(Screen_x==640){
+                Screen_x=0;
+                Screen_y+=8;
+            }
             putPixelArray(Screen_x,Screen_y++,font[c].row1);
             putPixelArray(Screen_x,Screen_y++,font[c].row2);
             putPixelArray(Screen_x,Screen_y++,font[c].row3);
@@ -50,10 +56,34 @@ class VGA{
             putPixelArray(Screen_x,Screen_y++,font[c].row6);
             putPixelArray(Screen_x,Screen_y++,font[c].row7);
             putPixelArray(Screen_x,Screen_y++,font[c].row8);
-            Screen_y = 0;
-            Screen_x += 1;
+            
+            Screen_x+=8;
+            Screen_y=old_y;
+        }
+        void putString(string str){
+            while(*str){
+                if(*str=='\r'){
+                    Screen_x=0;
+                    str++;
+                    continue;
+                }
+                else if(*str=='\n'){
+                    Screen_y+=8;
+                    str++;
+                    continue;
+                }
+                putChar(*str++);
+            }
+        }
+        void clearScreen(){
+            for(int i = 0;i<80;i++){
+                for(int j = 0;j<60;j++){
+                    putChar(' ');
+                }
+            }
         }
 };
 
 
 extern VGA TTY1;
+void initTTY(VGA* tty);
