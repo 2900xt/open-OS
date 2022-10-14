@@ -18,6 +18,10 @@ start:
     mov cl, 0x02
     call discRead
 
+    mov ah, 0x00
+    mov al, 0x12
+    int 0x10
+
     jmp PROGRAM_SPACE
 
 

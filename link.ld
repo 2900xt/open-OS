@@ -2,14 +2,17 @@ OUTPUT_FORMAT(binary)
 
 ENTRY(_start)
 
-SEARCH_DIR(build)
+SEARCH_DIR(bin)
 
 INPUT(
     stage2.elf
+    kmain.elf
+    io.elf
+    tty.elf
 )
 
 OUTPUT(
-    build/EXT.bin
+    bin/Kernel.bin
 )
 
 SECTIONS{
@@ -19,11 +22,11 @@ SECTIONS{
     {
         *(.text)
     }
-    .idt BLOCK(0x1000) : ALIGN(0x1000)
+    /*.idt BLOCK(0x1000) : ALIGN(0x1000)
     {
         _idt = .;
         . = . + 0x1000;
-    }
+    }*/
     .data : ALIGN(0x1000)
     {
         *(.data)
