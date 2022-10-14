@@ -14,6 +14,8 @@ all:
 	$(CROSS) $(CCFLAGS) -o bin/kmain.elf -c src/x64/kmain.cpp
 	$(CROSS) $(CCFLAGS) -o bin/io.elf -c src/x64/io/io.cpp
 	$(CROSS) $(CCFLAGS) -o bin/tty.elf -c src/x64/io/tty.cpp
+	$(CROSS) $(CCFLAGS) -o bin/idt.elf -c src/x64/int/idt.cpp
+	$(CROSS) $(CCFLAGS) -o bin/pic.elf -c src/x64/int/pic.cpp
 
 	$(LD) -T "link.ld"
 
@@ -22,5 +24,3 @@ all:
 	dd if=bin/os.bin of=bin/open-os.flp conv=notrunc
 
 	bochs -q
-
-	

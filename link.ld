@@ -9,6 +9,8 @@ INPUT(
     kmain.elf
     io.elf
     tty.elf
+    pic.elf
+    idt.elf
 )
 
 OUTPUT(
