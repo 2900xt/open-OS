@@ -11,5 +11,9 @@ entry64:
     [extern kmain]
     call kmain    
 
-    cli
-    hlt
+    .end:
+        hlt
+        jmp .end
+
+
+%include "src/x64/int/idt.s"

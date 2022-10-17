@@ -11,6 +11,11 @@ static inline byte inb(word port){
     return ret;
 }
 
+static inline dword CPUID(dword code, dword where[4]) {
+  asm volatile("cpuid":"=a"(*where),"=b"(*(where+1)),
+               "=c"(*(where+2)),"=d"(*(where+3)):"a"(code));
+  return (dword)where[0];
+}
 
 void MagicBreak();
 

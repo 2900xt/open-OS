@@ -9,6 +9,7 @@ GRAN_4K         equ 1 << 7
 SZ_32           equ 1 << 6
 LONG_MODE       equ 1 << 5
 
+global x64_gdt_openOS
 x64_gdt_openOS:
     .NullSeg: equ $ - x64_gdt_openOS
         dq 0
