@@ -41,13 +41,13 @@ class VGA{
             font[c].row8=r8; 
         }
         void putChar(char c){
-            word old_y= Screen_y;
             if(font[c].row1 = 0)
                 return;
             if(Screen_x==640){
                 Screen_x=0;
                 Screen_y+=8;
             }
+            word old_y= Screen_y;
             putPixelArray(Screen_x,Screen_y++,font[c].row1);
             putPixelArray(Screen_x,Screen_y++,font[c].row2);
             putPixelArray(Screen_x,Screen_y++,font[c].row3);
@@ -72,6 +72,22 @@ class VGA{
                     str++;
                     continue;
                 }
+                else if(*str== '\\'){
+                    putChar('\\');
+                    str++;
+                    continue;
+                }
+                else if(*str== '\''){
+                    putChar('\'');
+                    str++;
+                    continue;
+                }
+                else if(*str== '\"'){
+                    putChar('\"');
+                    str++;
+                    continue;
+                }
+
                 putChar(*str++);
             }
         }

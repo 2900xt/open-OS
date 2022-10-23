@@ -16,6 +16,8 @@ all:
 	$(CROSS) $(CCFLAGS) -o bin/tty.elf -c src/x64/io/tty.cpp
 	$(CROSS) $(CCFLAGS) -o bin/idt.elf -c src/x64/int/idt.cpp
 	$(CROSS) $(CCFLAGS) -o bin/pic.elf -c src/x64/int/pic.cpp
+	$(CROSS) $(CCFLAGS) -o bin/mem.elf -c src/x64/mem/mem.cpp
+
 
 	$(LD) -T "link.ld"
 

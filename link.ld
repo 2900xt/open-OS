@@ -11,6 +11,7 @@ INPUT(
     tty.elf
     pic.elf
     idt.elf
+    mem.elf
 )
 
 OUTPUT(

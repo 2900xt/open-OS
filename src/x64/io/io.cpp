@@ -1,4 +1,5 @@
 #include <io.hpp>
+#include <int.hpp>
 
 
 void MagicBreak(){
@@ -8,4 +9,10 @@ void MagicBreak(){
 void debugPrint(string str){
     while(*str)
         outb(0xE9, *str++);
+}
+
+char getChar(){
+    resetInputStack();
+    while(isp == 127);
+    return popInputStack();
 }

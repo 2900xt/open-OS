@@ -19,4 +19,24 @@ static inline dword CPUID(dword code, dword where[4]) {
 
 void MagicBreak();
 
+char getChar();
+
 void debugPrint(string str);
+
+struct MemorySegmentHeader_T{
+    uint64_t MemoryLength;
+    MemorySegmentHeader_T*  NextSegment;
+    MemorySegmentHeader_T* PreviousSegment;
+    MemorySegmentHeader_T*  NextFreeSegment;
+    MemorySegmentHeader_T* PreviousFreeSegment;
+    bool Free;
+};
+
+void memset(void* start, qword value, qword num);
+void memcpy(void* destination, void* source, qword num);
+void heap_init(qword heap_address, qword heap_length);
+void* malloc(qword size);
+void CombineFreeSegments(MemorySegmentHeader_T* a, MemorySegmentHeader_T* b);
+void free(void* address);
+void* calloc(qword size);
+void* realloc(void* address, qword newSize);
