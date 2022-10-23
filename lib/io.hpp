@@ -17,12 +17,6 @@ static inline dword CPUID(dword code, dword where[4]) {
   return (dword)where[0];
 }
 
-void MagicBreak();
-
-char getChar();
-
-void debugPrint(string str);
-
 struct MemorySegmentHeader_T{
     uint64_t MemoryLength;
     MemorySegmentHeader_T*  NextSegment;
@@ -31,6 +25,12 @@ struct MemorySegmentHeader_T{
     MemorySegmentHeader_T* PreviousFreeSegment;
     bool Free;
 };
+
+void MagicBreak();
+
+char getChar();
+
+void debugPrint(string str);
 
 void memset(void* start, qword value, qword num);
 void memcpy(void* destination, void* source, qword num);
