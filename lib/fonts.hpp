@@ -1,5 +1,6 @@
 #pragma once
 #include <io.hpp>
+#include <gsl/string.hpp>
 #include <types.hpp>
 
 
@@ -91,6 +92,11 @@ class VGA{
                 putChar(*str++);
             }
         }
+
+        void putString(GSL::String str){
+            putString(str.c_str());
+        }
+
         void clearScreen(){
             for(int i = 0;i<80;i++){
                 for(int j = 0;j<60;j++){

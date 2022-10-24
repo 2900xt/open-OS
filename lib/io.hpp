@@ -1,5 +1,8 @@
-#pragma once
+#ifndef IO_HPP
+#define IO_HPP
+
 #include <types.hpp>
+#define NEW(a) (a*)calloc(sizeof(a));
 
 static inline void outb(word port, byte val){
     asm volatile("outb %0, %1" : : "a"(val), "Nd"(port));
@@ -33,10 +36,15 @@ char getChar();
 void debugPrint(string str);
 
 void memset(void* start, qword value, qword num);
-void memcpy(void* destination, void* source, qword num);
+void memcpy(void* destination, const void* source, qword num);
 void heap_init(qword heap_address, qword heap_length);
 void* malloc(qword size);
 void CombineFreeSegments(MemorySegmentHeader_T* a, MemorySegmentHeader_T* b);
 void free(void* address);
 void* calloc(qword size);
 void* realloc(void* address, qword newSize);
+
+int strlen(const char* str);
+
+
+#endif

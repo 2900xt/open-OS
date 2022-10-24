@@ -16,3 +16,11 @@ char getChar(){
     while(isp == 127);
     return popInputStack();
 }
+
+
+int strlen(const char* str){
+    int length = 0;
+    while(*str++)
+        length++;
+    return length;
+}

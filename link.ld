@@ -12,6 +12,7 @@ INPUT(
     pic.elf
     idt.elf
     mem.elf
+    tfs.elf
 )
 
 OUTPUT(

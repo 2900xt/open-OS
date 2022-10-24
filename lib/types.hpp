@@ -7,4 +7,4 @@ typedef uint64_t qword;
 
 typedef const char* string;
 
-#define NULL (void*)0
+#define NULL 0

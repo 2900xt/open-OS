@@ -30,7 +30,7 @@ void memset(void* start, qword value, qword num) {
 	}
 }
 
-void memcpy(void* destination, void* source, qword num) {
+void memcpy(void* destination, const void* source, qword num) {
 	if (num <= 8) {
 		byte* valPtr = (byte*)source;
 		for (byte* ptr = (byte*)destination; ptr < (byte*)((qword)destination + num); ptr++) {
