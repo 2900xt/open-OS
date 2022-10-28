@@ -97,6 +97,10 @@ class VGA{
             putString(str.c_str());
         }
 
+        void putUnsigned(qword integer){
+            putString(IntegerToString(integer));
+        }
+
         void clearScreen(){
             for(int i = 0;i<80;i++){
                 for(int j = 0;j<60;j++){
@@ -105,25 +109,6 @@ class VGA{
             }
         }
 
-    const char g_HexChars[17] = "0123456789ABCDEF";
-
-    void putUnsigned(qword number, int radix = 10)
-    {
-        char buffer[32];
-        int pos = 0;
-
-        // convert number to ASCII
-        do 
-        {
-            qword rem = number % radix;
-            number /= radix;
-            buffer[pos++] = g_HexChars[rem];
-        } while (number > 0);
-
-        // print number in reverse order
-        putString(buffer);
-    }
-    
 };
 
 

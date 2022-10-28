@@ -30,11 +30,8 @@ struct MemorySegmentHeader_T{
 };
 
 void MagicBreak();
-
 char getChar();
-
 void debugPrint(string str);
-
 void memset(void* start, qword value, qword num);
 void memcpy(void* destination, const void* source, qword num);
 void heap_init(qword heap_address, qword heap_length);
@@ -43,7 +40,9 @@ void CombineFreeSegments(MemorySegmentHeader_T* a, MemorySegmentHeader_T* b);
 void free(void* address);
 void* calloc(qword size);
 void* realloc(void* address, qword newSize);
-
+template<typename T>
+const char* IntegerToString(T value);
+void strcat(char* destination, char* source);
 int strlen(const char* str);
 
 

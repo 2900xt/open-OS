@@ -17,8 +17,11 @@ IDT64 _idt[256];
 
 extern "C" void common_ISR();
 extern "C" void ISR1();
-byte isp = 127;
-char inputStack[128];
+
+char lastKey = 0;
+bool keyPressed = false;
+double second = 0.0;
+double reload;
 
 const char ScanCodeLookupTable[] ={
     0, 0, '1', '2',
@@ -36,21 +39,7 @@ const char ScanCodeLookupTable[] ={
     'b', 'n', 'm', ',',
     '.', '/', 0, '*',
     0, ' '
-  };
-
-char popInputStack(){
-    return inputStack[isp--];
-}
-
-void pushInputStack(char c){
-    inputStack[isp++] = c;
-}
-
-void resetInputStack(){
-    inputStack[isp] = 0;
-    while(++isp != 127)
-        inputStack[isp] = 0;
-}
+};
 
 static inline void lidt(void* base, uint16_t size)
 {
@@ -76,6 +65,14 @@ void enableAllInterrupts(){
     debugPrint("All Interrupts Enabled\n\r");
 }
 
+void set_pit_count(unsigned count) {
+ 
+	outb(0x40,count&0xFF);		// Low byte
+	outb(0x40,(count&0xFF00)>>8);	// High byte
+
+    reload = count / (3579545 / 3) * 100;
+	return;
+}
 
 void IDTsetEntry(byte IRQ,qword* ISR, word selector, byte flags, byte IST){
     _idt[IRQ].zero = 0;
@@ -88,9 +85,18 @@ void IDTsetEntry(byte IRQ,qword* ISR, word selector, byte flags, byte IST){
 }
 
 extern "C" void keyboardHandler(){
-    byte character = ScanCodeLookupTable[inb(0x60)];
-    pushInputStack(character);
+    byte code = inb(0x60);
+    if(code < 59){
+        lastKey = ScanCodeLookupTable[code];
+        if(lastKey != 0)
+            keyPressed = true;
+    }
     PIC_sendEOI(1);
+}
+
+extern "C" void PITHandler(){
+    second += reload;
+    return;
 }
 
 void x64IDT_INIT(){
@@ -119,6 +125,13 @@ void x64IDT_INIT(){
 
     maskAllInterrupts();
 
+
+    outb(0x64,0xF3);
+    outb(0x64,0b00111111);
+
+    //set_pit_count(0x10000);
+
+    //IRQ_set_mask(0);
     IRQ_clear_mask(1);
 
     lidt(_idt, 128*256 - 1);

@@ -15,13 +15,10 @@ extern "C" void kmain(){
     
     FileObjectDescriptor* OPENOS_ROOT = NEW(FileObjectDescriptor);
 
-    ROOT_INIT(OPENOS_ROOT);
+    initializeRoot(OPENOS_ROOT);
 
-    TTY1.putString("Loading...");
+    TTY1.putString("Booting from 0x7c00...");
 
-    for(;;){
-        getChar();
-    }
-
+    for(;;);
 
 }

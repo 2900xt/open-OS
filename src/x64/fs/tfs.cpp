@@ -1,7 +1,8 @@
 #include <fs/tfs.hpp>
 
+FileObjectDescriptor* currentDirectory;
 
-void ROOT_INIT(FileObjectDescriptor* OPENOS_ROOT){
+void initializeRoot(FileObjectDescriptor* OPENOS_ROOT){
 
     OPENOS_ROOT->objectName = "/";
     OPENOS_ROOT->objectType = DIR_TYPE;
@@ -10,22 +11,33 @@ void ROOT_INIT(FileObjectDescriptor* OPENOS_ROOT){
     OPENOS_ROOT->objectSub = NULL;
     OPENOS_ROOT->objectParent = NULL;
 
+    currentDirectory = OPENOS_ROOT;
+
     debugPrint("Initialized TFS\n\r");
 
 }
 
-FileObjectDescriptor* makeNewFile(FileObjectDescriptor* directory, const char* name, fileTypes_t type, void* data){
-    if(directory->objectType != DIR_TYPE)
-        return NULL;
+FileObjectDescriptor* makeNewDir(FileObjectDescriptor* parent, const char* name){
+
+    int FSlevel = 0;
+    while(parent->objectParent){
+        parent = parent->objectParent;
+        FSlevel++;
+    }
+
     FileObjectDescriptor* newFile = NEW(FileObjectDescriptor);
     newFile->objectName = name;
-    newFile->objectType = type;
+    newFile->objectType = DIR_TYPE;
     newFile->objectSub = NULL;
-    newFile->objectData = data;
-    newFile->objectParent = directory;
+    newFile->objectData = (void*)FSlevel;
+    newFile->objectParent = parent;
     newFile->objectInUse = false;
     
-    directory->objectSub = newFile;
+    parent->objectSub = newFile;
 
     return newFile;
+}
+
+void changeCurrentDirectory(FileObjectDescriptor* newDirectory){
+
 }

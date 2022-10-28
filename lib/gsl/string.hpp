@@ -46,6 +46,23 @@ namespace GSL{
                 return data[index];
             }
 
+            void operator<<(const char* str){
+                data = (char*)realloc(data,strlen(str));
+                strcat(data,(char*)str);
+            }
+            void operator<<(String& str){
+                data = (char*)realloc(data,strlen(str.c_str()));
+                strcat(data,(char*)str.c_str());
+            }
+            void operator>>(String& str){
+                str = data;
+                return;
+            }
+
+            void operator=(String str){
+                memcpy(data,str.c_str(),str.size());
+            }
+
             ~String(){
                 free(data);
             }

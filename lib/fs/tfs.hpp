@@ -20,9 +20,13 @@ struct FileObjectDescriptor{
     fileTypes_t             objectType;
     void*                   objectData;
     bool                    objectInUse;
+    int                     objectSubCount;
     FileObjectDescriptor*   objectSub;
     FileObjectDescriptor*   objectParent;
 };
 
-void ROOT_INIT(FileObjectDescriptor* OPENOS_ROOT);
+void initializeRoot(FileObjectDescriptor* OPENOS_ROOT);
+GSL::String* returnFilePath(FileObjectDescriptor* file);
+
+FileObjectDescriptor* makeNewDir(FileObjectDescriptor* directory, const char* name); 
 #endif
