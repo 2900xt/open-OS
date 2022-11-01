@@ -70,6 +70,7 @@ class VGA{
                 }
                 else if(*str=='\n'){
                     Screen_y+=8;
+                    Screen_x=0;
                     str++;
                     continue;
                 }
@@ -97,7 +98,7 @@ class VGA{
             putString(str.c_str());
         }
 
-        void putUnsigned(qword integer){
+        void putInt(qword integer){
             putString(IntegerToString(integer));
         }
 

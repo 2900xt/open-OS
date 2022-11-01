@@ -15,8 +15,9 @@ typedef struct{
 
 IDT64 _idt[256];
 
-extern "C" void common_ISR();
-extern "C" void ISR1();
+extern "C" qword common_ISR;
+extern "C" qword ISR1;
+extern "C" qword ISR6;
 
 char lastKey = 0;
 bool keyPressed = false;
@@ -74,14 +75,15 @@ void set_pit_count(unsigned count) {
 	return;
 }
 
-void IDTsetEntry(byte IRQ,qword* ISR, word selector, byte flags, byte IST){
-    _idt[IRQ].zero = 0;
-    _idt[IRQ].offsetLow = (word)(((qword)ISR & 0x000000000000FFFF));
-    _idt[IRQ].offsetMid = (word)(((qword)ISR & 0x00000000FFFF0000) >> 16);
-    _idt[IRQ].offsetHigh = (word)(((qword)ISR & 0xFFFFFFFF00000000) >> 32);
-    _idt[IRQ].IST = IST;
-    _idt[IRQ].selector = flags;
-    _idt[IRQ].flags = flags;
+
+void IDT_ENABLEINT(int interrupt, uint64_t* isr, uint8_t ist = 0, uint8_t flags = 0x8e, uint16_t selector = 0x08){
+        _idt[interrupt+32].zero = 0;
+        _idt[interrupt+32].offsetLow = (uint16_t)(((uint64_t)isr & 0x000000000000ffff));
+        _idt[interrupt+32].offsetMid = (uint16_t)(((uint64_t)isr & 0x00000000ffff0000) >> 16);
+        _idt[interrupt+32].offsetHigh = (uint32_t)(((uint64_t)isr & 0xffffffff00000000) >> 32);
+        _idt[interrupt+32].IST = ist;
+        _idt[interrupt+32].selector = selector;
+        _idt[interrupt+32].flags = flags;
 }
 
 extern "C" void keyboardHandler(){
@@ -94,9 +96,18 @@ extern "C" void keyboardHandler(){
     PIC_sendEOI(1);
 }
 
+bool irq6 = false;
+
+extern "C" void floppyHandler(){
+    if(irq6)
+        MagicBreak();
+    irq6 = true;
+    PIC_sendEOI(6);
+}
+
 extern "C" void PITHandler(){
     second += reload;
-    return;
+    PIC_sendEOI(0);
 }
 
 void x64IDT_INIT(){
@@ -113,9 +124,9 @@ void x64IDT_INIT(){
 
     for(int i = 32 ; i < 255 ; i++){
         _idt[i].zero = 0;
-        _idt[i].offsetLow = (word)(((qword)&ISR1 & 0x000000000000FFFF));
-        _idt[i].offsetMid = (word)(((qword)&ISR1 & 0x00000000FFFF0000) >> 16);
-        _idt[i].offsetHigh = (word)(((qword)&ISR1 & 0xFFFFFFFF00000000) >> 32);
+        _idt[i].offsetLow = (word)(((qword)&common_ISR & 0x000000000000FFFF));
+        _idt[i].offsetMid = (word)(((qword)&common_ISR & 0x00000000FFFF0000) >> 16);
+        _idt[i].offsetHigh = (word)(((qword)&common_ISR & 0xFFFFFFFF00000000) >> 32);
         _idt[i].IST = 0;
         _idt[i].selector = 0x8;
         _idt[i].flags = 0x8e;
@@ -125,14 +136,12 @@ void x64IDT_INIT(){
 
     maskAllInterrupts();
 
+    IDT_ENABLEINT(1,&ISR1);
+    IDT_ENABLEINT(6,&ISR6);
 
-    outb(0x64,0xF3);
-    outb(0x64,0b00111111);
+    IRQ_clear_mask(1);      //PS-2
+    IRQ_clear_mask(6);      //FDC
 
-    //set_pit_count(0x10000);
-
-    //IRQ_set_mask(0);
-    IRQ_clear_mask(1);
 
     lidt(_idt, 128*256 - 1);
 

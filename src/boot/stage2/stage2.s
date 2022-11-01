@@ -136,7 +136,7 @@ enter32:
 
     ;Enabling all pages that make up the 2MB (4K per page * 512) 
 
-    mov ebx, 0x00000003       
+    mov ebx, PAGE_ENABLE      
     mov ecx, 512
 
     .setPageTableEntry:
@@ -179,12 +179,12 @@ break:
     hlt
 
 
-PM4LT   equ 0x1000      ;Page Map Level 4 Table (PM4LT[0] = PDPT)           uint32_t**** (Too many pointers!!!)
-PDPT    equ 0x2000      ;Page Directory Pointer Table (PDPT[0] = PDT)       uint32_t***
-PDT     equ 0x3000      ;Page Directory Table (PDT[0] = PT)                 uint32_t**
-PT      equ 0x4000      ;Page Table                                         uint32_t*
+PM4LT   equ 0x4000      ;Page Map Level 4 Table (PM4LT[0] = PDPT)           uint32_t**** (Too many pointers!!!)
+PDPT    equ 0x5000      ;Page Directory Pointer Table (PDPT[0] = PDT)       uint32_t***
+PDT     equ 0x6000      ;Page Directory Table (PDT[0] = PT)                 uint32_t**
+PT      equ 0x7000      ;Page Table                                         uint32_t*
 
-PAGE_ENABLE equ 0x0003  ;Page can be read and written to, page is active
+PAGE_ENABLE equ 0x00000003  ;Page can be read and written to, page is active
 
 section .data
 

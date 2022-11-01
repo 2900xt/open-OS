@@ -8,8 +8,8 @@ entry64:
     mov gs, ax
     mov ss, ax
 
-    [extern kmain]
-    call kmain    
+    [extern setup64]
+    call setup64    
 
     .end:
         hlt

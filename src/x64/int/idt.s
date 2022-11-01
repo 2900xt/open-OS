@@ -38,3 +38,11 @@ ISR1:
 	call keyboardHandler
 	POPALL
 	iretq
+
+[extern floppyHandler]
+GLOBAL ISR6
+ISR6:
+	PUSHALL
+	call floppyHandler
+	POPALL
+	iretq

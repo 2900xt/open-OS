@@ -12,6 +12,10 @@ void debugPrint(string str){
         outb(0xE9, *str++);
 }
 
+void debugPrintInteger(qword i){
+	debugPrint(IntegerToString(i));
+}
+
 char getChar(){
 	while(!keyPressed);
 	keyPressed = false;

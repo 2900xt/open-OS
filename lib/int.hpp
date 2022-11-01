@@ -11,6 +11,7 @@ void x64IDT_INIT();
 extern char lastKey;
 extern bool keyPressed;
 
+extern bool irq6;
 #define __STI __asm__("sti")
 
 #define __CLI __asm__("cli")

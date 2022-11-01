@@ -42,6 +42,7 @@ void* calloc(qword size);
 void* realloc(void* address, qword newSize);
 template<typename T>
 const char* IntegerToString(T value);
+void debugPrintInteger(qword i);
 void strcat(char* destination, char* source);
 int strlen(const char* str);
 

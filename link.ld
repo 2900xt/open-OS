@@ -13,6 +13,8 @@ INPUT(
     idt.elf
     mem.elf
     tfs.elf
+    fdc.elf
+    proc.elf
 )
 
 OUTPUT(

@@ -3,6 +3,12 @@
 
 MemorySegmentHeader_T* FirstFreeMemorySegment;
 
+#define PG_PM4LT 0x1000
+#define PG_PDPT  0x2000
+#define PG_PDT   0x3000
+#define PG_PT    0x4000
+
+
 void memset(void* start, qword value, qword num) {
 
 	if (num <= 8) {
@@ -191,3 +197,4 @@ void* realloc(void* address, qword newSize) {
 	free(address);
 	return(newMem);
 }
+

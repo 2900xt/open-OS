@@ -29,4 +29,7 @@ void initializeRoot(FileObjectDescriptor* OPENOS_ROOT);
 GSL::String* returnFilePath(FileObjectDescriptor* file);
 
 FileObjectDescriptor* makeNewDir(FileObjectDescriptor* directory, const char* name); 
+
+
+byte* FDCInitialize();
 #endif
