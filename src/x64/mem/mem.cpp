@@ -1,13 +1,35 @@
 #include <types.hpp>
 #include <io.hpp>
+#include <fonts.hpp>
 
 MemorySegmentHeader_T* FirstFreeMemorySegment;
+bool memoryRegionsGot = false;
+byte usableMemoryRegionCount = 0;
+MEMMAPENTRY* usableRegions[10];
 
-#define PG_PM4LT 0x1000
-#define PG_PDPT  0x2000
-#define PG_PDT   0x3000
-#define PG_PT    0x4000
+MEMMAPENTRY** GetUsableMemory(){
+	if(memoryRegionsGot)
+		return usableRegions;
 
+	byte index;
+	for(byte i = 0; i < memoryRegionCount; i++){
+		MEMMAPENTRY* memoryMap = (MEMMAPENTRY*)0x1000;
+		memoryMap += i;
+		if(memoryMap->RegionType == 1)
+			usableRegions[index++] = memoryMap;
+	}
+
+	usableMemoryRegionCount = index;
+	memoryRegionsGot = true;
+	return usableRegions;
+}
+
+void printMemoryInformation(const char* proc){
+	GetUsableMemory();
+	for(byte i = 0; i < usableMemoryRegionCount; i++){
+		TTY1.printf("%c%s%c [0xE280] %c Memory Found - %c%x%c to %c%x%c\n",RED , proc, LRED,WHITE, GREEN ,usableRegions[i]->BaseAddress, WHITE , GREEN,usableRegions[i]->BaseAddress + usableRegions[i]->RegionLength, WHITE);
+	}
+}
 
 void memset(void* start, qword value, qword num) {
 

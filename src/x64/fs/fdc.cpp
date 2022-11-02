@@ -357,25 +357,26 @@ void FDCReadSector_LBA(byte drive, word lba, operation_data* out){
 }
 
 void printFDType(FDTypes CurrentFDType, const char* MSG){
-    TTY1.putString(MSG);
+    TTY1.printf("%c[INIT]%c", RED,WHITE);
+    TTY1.printf("%c%s%c", LRED,MSG,WHITE);
     switch(CurrentFDType){
         case _0360_525:
-            TTY1.putString(": FDC Detected: 360K\n");
+            TTY1.printf(" Floppy Detected- %c360K%c\n",GREEN,WHITE);
             break;
         case _1200_525:
-            TTY1.putString(": FDC Detected: 1.2M\n");
+            TTY1.printf(" Floppy Detected- %c1.2M%c\n",GREEN,WHITE);
             break;
         case _0720_350:
-            TTY1.putString(": FDC Detected: 720K\n");
+            TTY1.printf(" Floppy Detected- %c720K%c\n",GREEN,WHITE);
             break;
         case _1440_350:
-            TTY1.putString(": FDC Detected: 1.44M\n");
+            TTY1.printf(" Floppy Detected- %c1.44M%c\n",GREEN,WHITE);
             break;
         case _2880_350:
-            TTY1.putString(": FDC Detected: 2.88M\n");
+            TTY1.printf(" Floppy Detected- %c2.88M%c\n",GREEN,WHITE);
             break;
         default:
-            TTY1.putString(": No FDC detected!\n");
+            TTY1.printf(" No Floppy detected!\n");
             return;
     }
 }
@@ -405,8 +406,8 @@ byte* FDCInitialize(){
     if(!masterFDType)
         return nullptr;
 
-    printFDType(masterFDType,"INIT : Master FDC");
-    printFDType(slaveFDType,"INIT : Slave FDC");
+    printFDType(masterFDType," [Master FDC]");
+    printFDType(slaveFDType," [Slave FDC]");
 
     DMAInitialize();
 

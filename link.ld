@@ -15,6 +15,7 @@ INPUT(
     tfs.elf
     fdc.elf
     proc.elf
+    time.elf
 )
 
 OUTPUT(

@@ -25,7 +25,8 @@ enum class PROCESS_STATES
 };
 
 struct PROCESS_T
-{
+{   
+    const char* name;
     qword code;
     PROCESS_T* parent;
     PROCESS_T* child;

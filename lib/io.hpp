@@ -29,8 +29,18 @@ struct MemorySegmentHeader_T{
     bool Free;
 };
 
+struct MEMMAPENTRY{
+    qword BaseAddress;
+    qword RegionLength;
+    dword RegionType;
+    dword ExtendedAttributes;
+};
+
+extern "C" byte memoryRegionCount;
+
 void MagicBreak();
 char getChar();
+void printMemoryInformation(const char* proc);
 void debugPrint(string str);
 void memset(void* start, qword value, qword num);
 void memcpy(void* destination, const void* source, qword num);

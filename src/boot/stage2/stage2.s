@@ -3,6 +3,27 @@
 section .text
 global _start
 _start:
+
+    xor ax, ax
+    mov es, ax
+    mov di, 0x1000      ;Storing memory map at 0x1000, needs to be moved over because it interferes with DMA transfers
+    mov edx, 0x534d4150
+    xor ebx, ebx
+
+    .loop:
+        mov eax, 0xE820
+        mov ecx, 24
+        int 0x15
+
+        cmp ebx, 0
+        je .done
+
+        add di, 24
+        inc byte [memoryRegionCount]
+        jmp .loop
+
+    .done:
+
     in al, 0x92
     or al, 2
     out 0x92, al
@@ -10,8 +31,6 @@ _start:
     cli
 
     lgdt [gdt_descriptor]
-    
-    
 
     mov eax, cr0
     or eax, 1
@@ -20,6 +39,10 @@ _start:
 
 section .data
 %include "src/boot/stage2/i386_gdt.s"
+
+global memoryRegionCount
+memoryRegionCount:
+    db 0
 
 [bits 32]
 

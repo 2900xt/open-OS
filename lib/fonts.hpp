@@ -2,6 +2,7 @@
 #include <io.hpp>
 #include <gsl/string.hpp>
 #include <types.hpp>
+#include <stdarg.h>
 
 
 #define SCREEN_WIDTH    640
@@ -22,6 +23,25 @@ struct Character{
     byte row6;
     byte row7;
     byte row8;
+};
+
+enum VGA_COLORS{
+    BLACK,
+    BLUE,
+    GREEN,
+    CYAN,
+    RED,
+    MAGENTA,
+    ORANGE,
+    LGRAY,
+    GRAY,
+    PURPLE,
+    LGREEN,
+    LBLUE,
+    LRED,
+    PINK,
+    YELLOW,
+    WHITE
 };
 
 class VGA{
@@ -57,7 +77,7 @@ class VGA{
             putPixelArray(Screen_x,Screen_y++,font[c].row6);
             putPixelArray(Screen_x,Screen_y++,font[c].row7);
             putPixelArray(Screen_x,Screen_y++,font[c].row8);
-            
+
             Screen_x+=8;
             Screen_y=old_y;
         }
@@ -108,6 +128,89 @@ class VGA{
                     putChar(' ');
                 }
             }
+        }
+
+        void printf(const char* fmt, ...){
+            if(fmt == nullptr)
+                return;
+            
+            va_list valist;
+            va_start(valist, fmt);
+            int num = 0;
+            char* token = nullptr;
+            int i = 0;
+            int len = strlen(fmt);
+            int found = 0;
+
+            while(fmt[i] != '\0'){
+                num = 0;
+                found = 0;
+                token = nullptr;
+
+                if((fmt[i] == '%') && ((i+1) < len)){
+                    switch(fmt[i+1]){
+                        case 'd':
+                            {
+                                found = 1;
+                                num = va_arg(valist, int);
+                                this->putString(IntegerToString(num));
+                            }
+                            break;
+                        case 's':
+                            {
+                                found = 1;
+                                token = va_arg(valist, char*);
+                                this->putString(token);
+                            }
+                            break;
+                        case 'c':
+                            {
+                                found = 1;
+                                num = va_arg(valist, int);
+                                outb(0x3c4,0x02);
+                                outb(0x3c5,num & 0b00001111);
+                            }
+                            break;
+                        case 'x':
+                            {
+                                found = 1;
+                                num = va_arg(valist, int);
+                                int ind = 1, j, temp;
+                                char base16[16];
+
+                                while(num != 0){
+                                    temp = num % 16;
+                                    if(temp < 10)
+                                        temp = temp+48;
+                                    else 
+                                        temp = temp+55;
+                                    base16[ind++] = temp;
+                                    num /= 16;
+                                }
+
+                                this->putString("0x");
+                                for(int j = ind - 1; j > 0;j--)
+                                    this->putChar(base16[j]);
+                            }
+                    }
+
+                    if(found != 0){
+                        i+=2;
+                        continue;
+                    }
+                }
+
+                if(fmt[i] == '\n'){
+                    Screen_y += 8;
+                    Screen_x = 0;
+                }
+                else{
+                    putChar(fmt[i]);
+                }
+                i++;
+            }
+
+            va_end(valist);
         }
 
 };

@@ -20,6 +20,7 @@ all:
 	$(CROSS) $(CCFLAGS) -o bin/tfs.elf -c src/x64/fs/tfs.cpp
 	$(CROSS) $(CCFLAGS) -o bin/fdc.elf -c src/x64/fs/fdc.cpp
 	$(CROSS) $(CCFLAGS) -o bin/proc.elf -c src/x64/mem/proc.cpp
+	$(CROSS) $(CCFLAGS) -o bin/time.elf -c src/x64/io/time.cpp
 
 
 	$(LD) -T "link.ld"
