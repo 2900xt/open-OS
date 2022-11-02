@@ -22,14 +22,15 @@ char getChar(){
 	return lastKey;
 }
 
-const char* getLine(){
-	char* ptr = (char*)malloc(80);
-	char current = getChar();
-	while(current != '\n'){
-		*ptr++ = current;
-		current = getChar();
-	}
-	return ptr;
+char buffer[80];
+
+char* getLine(){
+	int i = 0;
+	while(!enterPressed)
+		buffer[i++]=getChar();
+	
+	buffer[i]='\0';
+	return buffer;
 }
 
 int strlen(const char* str){

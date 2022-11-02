@@ -55,6 +55,7 @@ const char* IntegerToString(T value);
 void debugPrintInteger(qword i);
 void strcat(char* destination, char* source);
 int strlen(const char* str);
+char* getLine();
 
 
 #endif

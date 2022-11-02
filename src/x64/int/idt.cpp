@@ -19,6 +19,7 @@ extern "C" qword common_ISR;
 extern "C" qword ISR1;
 extern "C" qword ISR6;
 
+bool enterPressed = false;
 char lastKey = 0;
 bool keyPressed = false;
 double second = 0.0;
@@ -93,6 +94,12 @@ extern "C" void keyboardHandler(){
         if(lastKey != 0)
             keyPressed = true;
     }
+    if(code == 0x1C){
+        enterPressed = true;
+        keyPressed = true;
+        }
+    else
+        enterPressed = false;
     PIC_sendEOI(1);
 }
 

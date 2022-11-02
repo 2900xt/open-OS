@@ -10,6 +10,7 @@ void x64IDT_INIT();
 
 extern char lastKey;
 extern bool keyPressed;
+extern bool enterPressed;
 
 extern bool irq6;
 #define __STI __asm__("sti")

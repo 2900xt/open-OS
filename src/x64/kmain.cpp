@@ -6,6 +6,8 @@
 #include <proc.hpp>
 #include <time.hpp>
 
+#define OPENOS_VERSION "0.001 INDEV"
+
 void * __gxx_personality_v0=0;
 void * _Unwind_Resume =0;
 
@@ -18,7 +20,7 @@ int init(PROCESS_T* proc){
 
     initializeRoot(OPENOS_ROOT);
 
-    TTY1.printf("%c%s%c Booting from%c %x...%c\n",RED ,proc->name , WHITE, GREEN, 0x7c00, WHITE);
+    TTY1.printf("%c%s%c Booting %cOPEN-OS %s%c from%c %x...%c\n",RED ,proc->name , WHITE, PURPLE , OPENOS_VERSION, WHITE, LBLUE, 0x8000, WHITE);
     printMemoryInformation(proc->name);
     FDCInitialize();
 
@@ -29,7 +31,7 @@ int init(PROCESS_T* proc){
 
 
     for(;;){
-        TTY1.putChar(getChar());
+        TTY1.printf(getLine());
     }
 }
 
