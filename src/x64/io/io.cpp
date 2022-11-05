@@ -1,5 +1,5 @@
 #include <io.hpp>
-#include <int.hpp>
+#include <fonts.hpp>
 
 qword uptime = 0;
 
@@ -20,17 +20,6 @@ char getChar(){
 	while(!keyPressed);
 	keyPressed = false;
 	return lastKey;
-}
-
-char buffer[80];
-
-char* getLine(){
-	int i = 0;
-	while(!enterPressed)
-		buffer[i++]=getChar();
-	
-	buffer[i]='\0';
-	return buffer;
 }
 
 int strlen(const char* str){

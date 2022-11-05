@@ -5,6 +5,7 @@
 #include <fs/tfs.hpp>
 #include <proc.hpp>
 #include <time.hpp>
+#include <ui/shell.hpp>
 
 #define OPENOS_VERSION "0.001 INDEV"
 
@@ -27,15 +28,15 @@ int init(PROCESS_T* proc){
     TIME_T currentTime;
     readRTC(&currentTime);
 
-    TTY1.printf("\nCurrent Time: \n%d:%d:%d\n\nDate:\n%d/%d/%d\n->",currentTime.hour,currentTime.minute,currentTime.second,currentTime.day,currentTime.month,currentTime.year);
+    TTY1.printf("\nCurrent Time: \n%d:%d:%d\n\nDate:\n%d/%d/%d\n",currentTime.hour,currentTime.minute,currentTime.second,currentTime.day,currentTime.month,currentTime.year);
 
+    PROCESS_T* OpenOS_Shell = createProc(proc,"[SHELL]", PROCESS_PERMISSIONS::ROOT, OpenOS_proc_shell);
 
-    for(;;){
-        TTY1.printf(getLine());
-    }
+    runProc(OpenOS_Shell);
+
 }
 
 extern "C" void setup64(){
     PROCESS_T INIT = { "[INIT]" , (qword)init ,nullptr , nullptr , PROCESS_PERMISSIONS::ROOT};
     runProc(&INIT);
-}
+}                                                                                            

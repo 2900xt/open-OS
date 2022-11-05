@@ -2,6 +2,8 @@
 #define IO_HPP
 
 #include <types.hpp>
+#include <int.hpp>
+
 #define NEW(a) (a*)calloc(sizeof(a));
 
 static inline void outb(word port, byte val){
@@ -21,7 +23,7 @@ static inline dword CPUID(dword code, dword where[4]) {
 }
 
 struct MemorySegmentHeader_T{
-    uint64_t MemoryLength;
+    qword MemoryLength;
     MemorySegmentHeader_T*  NextSegment;
     MemorySegmentHeader_T* PreviousSegment;
     MemorySegmentHeader_T*  NextFreeSegment;
@@ -55,7 +57,6 @@ const char* IntegerToString(T value);
 void debugPrintInteger(qword i);
 void strcat(char* destination, char* source);
 int strlen(const char* str);
-char* getLine();
 
 
 #endif

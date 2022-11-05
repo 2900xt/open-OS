@@ -11,13 +11,13 @@ byte getRTCReg(int reg){
 }
 
 void readRTC(TIME_T* current){
-      unsigned char last_second;
-      unsigned char last_minute;
-      unsigned char last_hour;
-      unsigned char last_day;
-      unsigned char last_month;
-      unsigned char last_year;
-      unsigned char registerB;
+      byte last_second;
+      byte last_minute;
+      byte last_hour;
+      byte last_day;
+      byte last_month;
+      byte last_year;
+      byte registerB;
  
       // Note: This uses the "read registers until you get the same values twice in a row" technique
       //       to avoid getting dodgy/inconsistent values due to RTC updates

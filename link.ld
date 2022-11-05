@@ -16,6 +16,7 @@ INPUT(
     fdc.elf
     proc.elf
     time.elf
+    shell.elf
 )
 
 OUTPUT(

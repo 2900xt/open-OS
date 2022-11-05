@@ -18,5 +18,15 @@ int runProc(PROCESS_T* proc)
 {
     proc->state = PROCESS_STATES::FOREGROUND;
     int (*run)(PROCESS_T*)  = (int (*)(PROCESS_T*))proc->code;
-    return run(proc);
+    int code = run(proc);
+    proc->state = PROCESS_STATES::STOPPED;
+    return code;
+}
+
+bool killProc(PROCESS_T* proc){
+    if(proc->state != PROCESS_STATES::STOPPED)
+        return false;
+    
+    free(proc);
+    return true;
 }

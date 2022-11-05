@@ -66,6 +66,12 @@ namespace GSL{
             ~String(){
                 free(data);
             }
+
+            char* subString(int ind, int size){
+                char* ptr = (char*)malloc(size);
+                memcpy(ptr, data+ind, size);
+                return ptr;
+            }
     };
 
 

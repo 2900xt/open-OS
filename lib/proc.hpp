@@ -34,6 +34,8 @@ struct PROCESS_T
     PROCESS_STATES state;
 };
 
-PROCESS_T* createProc(PROCESS_T* parent, PROCESS_PERMISSIONS permissions, PROCESS_STATES state, void* data = nullptr);
+
+PROCESS_T* createProc(PROCESS_T* parent, const char* name , PROCESS_PERMISSIONS permissions, int (code)(PROCESS_T*));
 int runProc(PROCESS_T* proc);
+bool killProc(PROCESS_T* proc);
 #endif

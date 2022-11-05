@@ -8,9 +8,24 @@ void IRQ_clear_mask(byte IRQline);
 void x64IDT_INIT();
 
 
-extern char lastKey;
+enum class keys
+{
+    escape = 127 + 0x01,
+    backspace = 127 + 0x0E,
+    enter = 127 + 0x1C,
+    lctrl = 127 + 0x1D,
+    lshift = 127 + 0x2A,
+    rshift = 127 + 0x36,
+    lalt = 127 + 0x38,
+    caps = 127 + 0x3A,
+
+    rshift_release = 127 + 0xB6,
+    lshift_release = 127 + 0xAA
+};
+
+
+extern byte lastKey;
 extern bool keyPressed;
-extern bool enterPressed;
 
 extern bool irq6;
 #define __STI __asm__("sti")

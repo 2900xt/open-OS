@@ -19,9 +19,7 @@ extern "C" qword common_ISR;
 extern "C" qword ISR1;
 extern "C" qword ISR6;
 
-bool enterPressed = false;
-char lastKey = 0;
-bool keyPressed = false;
+
 double second = 0.0;
 double reload;
 
@@ -29,11 +27,11 @@ const char ScanCodeLookupTable[] ={
     0, 0, '1', '2',
     '3', '4', '5', '6',
     '7', '8', '9', '0',
-    '-', '=', 0, 0,
+    '-', '=', 0, '\t',
     'q', 'w', 'e', 'r',
     't', 'y', 'u', 'i',
     'o', 'p', '[', ']',
-    0, 0, 'a', 's',
+    '\n', 0, 'a', 's',
     'd', 'f', 'g', 'h',
     'j', 'k', 'l', ';',
     '\'', '`', 0, '\\',
@@ -42,6 +40,12 @@ const char ScanCodeLookupTable[] ={
     '.', '/', 0, '*',
     0, ' '
 };
+
+
+byte lastKey = 0;
+bool keyPressed = false;
+bool shiftBit = false;
+
 
 static inline void lidt(void* base, uint16_t size)
 {
@@ -90,19 +94,11 @@ void IDT_ENABLEINT(int interrupt, uint64_t* isr, uint8_t ist = 0, uint8_t flags 
 extern "C" void keyboardHandler(){
     byte code = inb(0x60);
     if(code < 59){
-        lastKey = ScanCodeLookupTable[code];
-        if(lastKey != 0)
-            keyPressed = true;
-    }
-    if(code == 0x1C){
-        enterPressed = true;
+        lastKey = (!shiftBit ? ScanCodeLookupTable[code] : (ScanCodeLookupTable[code] - 32));
         keyPressed = true;
-        }
-    else
-        enterPressed = false;
+    }
     PIC_sendEOI(1);
 }
-
 bool irq6 = false;
 
 extern "C" void floppyHandler(){
