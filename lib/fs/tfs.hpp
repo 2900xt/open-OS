@@ -21,7 +21,6 @@ struct FileObjectDescriptor{
     void*                   objectData;
     bool                    objectInUse;
     int                     objectSubCount;
-    FileObjectDescriptor*   objectSub;
     FileObjectDescriptor*   objectParent;
 };
 

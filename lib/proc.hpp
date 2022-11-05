@@ -3,6 +3,9 @@
 
 #include <fonts.hpp>
 #include <io.hpp>
+#include <fs/tfs.hpp>
+
+#define OPENOS_VERSION "0.001 INDEV"
 
 enum class PROCESS_PERMISSIONS
 {
@@ -30,6 +33,7 @@ struct PROCESS_T
     qword code;
     PROCESS_T* parent;
     PROCESS_T* child;
+    FileObjectDescriptor* file;
     PROCESS_PERMISSIONS permissions;
     PROCESS_STATES state;
 };

@@ -7,7 +7,6 @@
 #include <time.hpp>
 #include <ui/shell.hpp>
 
-#define OPENOS_VERSION "0.001 INDEV"
 
 void * __gxx_personality_v0=0;
 void * _Unwind_Resume =0;
@@ -37,6 +36,6 @@ int init(PROCESS_T* proc){
 }
 
 extern "C" void setup64(){
-    PROCESS_T INIT = { "[INIT]" , (qword)init ,nullptr , nullptr , PROCESS_PERMISSIONS::ROOT};
+    PROCESS_T INIT = { "[INIT]" , (qword)init ,nullptr , nullptr , nullptr , PROCESS_PERMISSIONS::ROOT};
     runProc(&INIT);
 }                                                                                            

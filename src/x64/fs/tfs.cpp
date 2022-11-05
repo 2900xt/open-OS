@@ -8,7 +8,6 @@ void initializeRoot(FileObjectDescriptor* OPENOS_ROOT){
     OPENOS_ROOT->objectType = DIR_TYPE;
     OPENOS_ROOT->objectData = NULL;
     OPENOS_ROOT->objectInUse = true;
-    OPENOS_ROOT->objectSub = NULL;
     OPENOS_ROOT->objectParent = NULL;
 
     currentDirectory = OPENOS_ROOT;
@@ -28,16 +27,17 @@ FileObjectDescriptor* makeNewDir(FileObjectDescriptor* parent, const char* name)
     FileObjectDescriptor* newFile = NEW(FileObjectDescriptor);
     newFile->objectName = name;
     newFile->objectType = DIR_TYPE;
-    newFile->objectSub = NULL;
     newFile->objectData = (void*)FSlevel;
     newFile->objectParent = parent;
     newFile->objectInUse = false;
-    
-    parent->objectSub = newFile;
 
     return newFile;
 }
 
-void changeCurrentDirectory(FileObjectDescriptor* newDirectory){
-
+FileObjectDescriptor* makeNewFile(FileObjectDescriptor* parent, const char* name, fileTypes_t type){
+    FileObjectDescriptor* newFile = NEW(FileObjectDescriptor);
+    newFile->objectParent = parent;
+    newFile->objectInUse = false;
+    newFile->objectType = type;
+    newFile->objectName = name;
 }

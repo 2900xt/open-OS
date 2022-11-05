@@ -1,6 +1,8 @@
 #include <ui/shell.hpp>
 
 char inputBuffer[80];
+char commandBuffer[80];
+
 char* getLine(){
     for(int i = 0; i < 80; i++)
         inputBuffer[i] = 0;
@@ -17,10 +19,17 @@ char* getLine(){
 }
 
 int debug_CMD(PROCESS_T* proc){
-    TTY1.printf("%c%s%c Enter Message: ",LRED, proc->name, WHITE);
-    char* out = getLine();
+
+    char* out;
+
+    if(*(commandBuffer + 6))
+        out = commandBuffer+6;
+    else{
+        TTY1.printf("%c%s%c Enter Message: ",LRED, proc->name, WHITE);
+        out = getLine();
+    }
     debugPrint(out);
-    TTY1.printf("%c%s%c Wrote %c%s%c to port 0xE9\n",LRED, proc->name, WHITE, LGREEN, out, WHITE);
+    TTY1.printf("%c%s%c Wrote %c%s%c to port %c0xE9%c\n",LRED, proc->name, WHITE, LGREEN, out, WHITE, CYAN, WHITE);
     return 0;
 }
 
@@ -28,6 +37,11 @@ int time_CMD(PROCESS_T* proc){
     TIME_T currentTime;
     readRTC(&currentTime);
     TTY1.printf("\n%c%s%c Current Time: \n%d:%d:%d\n\n%c%s%c Date:\n%d/%d/%d\n",LRED,proc->name,WHITE,currentTime.hour,currentTime.minute,currentTime.second,LRED,proc->name,WHITE,currentTime.day,currentTime.month,currentTime.year);
+    return 0;
+}
+
+int version_CMD(PROCESS_T* proc){
+    TTY1.printf("\n%c%s%c OPEN-OS %s%c",LRED, proc->name, PURPLE, OPENOS_VERSION, WHITE );
 }
 
 bool cmdCheck(const char* a, const char* b){
@@ -42,7 +56,6 @@ bool cmdCheck(const char* a, const char* b){
 int OpenOS_proc_shell(PROCESS_T* proc){
 
     int exitCode = 0;
-    char commandBuffer[80];
     PROCESS_T* CURRENT_COMMAND = nullptr;
 
     getCommand:
@@ -58,6 +71,8 @@ int OpenOS_proc_shell(PROCESS_T* proc){
             commandBuffer[i] = '\0';
             TTY1.printf("\n");
             goto processCommand;
+        }else if(commandBuffer[i] == ' '){
+            commandBuffer[i] = '\0';
         }
         TTY1.putChar(commandBuffer[i]);
     }
@@ -69,6 +84,9 @@ int OpenOS_proc_shell(PROCESS_T* proc){
     }
     else if(cmdCheck("time", commandBuffer)){
         CURRENT_COMMAND = createProc(proc,"[time]",proc->permissions,time_CMD);
+    }
+    else if(cmdCheck("version", commandBuffer)){
+        CURRENT_COMMAND = createProc(proc,"[version]",proc->permissions, version_CMD);
     }
 
     runCommand:
