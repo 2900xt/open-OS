@@ -30,4 +30,5 @@ all:
 	cat bin/bootsect.bin bin/Kernel.bin > bin/os.bin
 	dd if=bin/os.bin of=bin/open-os.flp conv=notrunc
 
+run:
 	bochs -q

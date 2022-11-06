@@ -29,6 +29,7 @@ int debug_CMD(PROCESS_T* proc){
         out = getLine();
     }
     debugPrint(out);
+    debugPrint("\n\r");
     TTY1.printf("%c%s%c Wrote %c%s%c to port %c0xE9%c\n",LRED, proc->name, WHITE, LGREEN, out, WHITE, CYAN, WHITE);
     return 0;
 }
@@ -45,7 +46,7 @@ int version_CMD(PROCESS_T* proc){
 }
 
 bool cmdCheck(const char* a, const char* b){
-    for(int j = -1; b[++j] != 0;){
+    for(int j = -1; b[++j] != 0 || a[j] != 0;){
         if(a[j] != b[j])
             return false;
     }
