@@ -18,16 +18,18 @@ IDT64 _idt[256];
 extern "C" qword common_ISR;
 extern "C" qword ISR1;
 extern "C" qword ISR6;
+extern "C" qword ISR0;
+extern "C" void enablePIT();
 
-
-double second = 0.0;
-double reload;
+int seconds = 0;
+int count = 0;
+int reload = 650;
 
 const char ScanCodeLookupTable[] ={
     0, 0, '1', '2',
     '3', '4', '5', '6',
     '7', '8', '9', '0',
-    '-', '=', 0, '\t',
+    '-', '=', '\r', '\t',
     'q', 'w', 'e', 'r',
     't', 'y', 'u', 'i',
     'o', 'p', '[', ']',
@@ -38,6 +40,24 @@ const char ScanCodeLookupTable[] ={
     'z', 'x', 'c', 'v',
     'b', 'n', 'm', ',',
     '.', '/', 0, '*',
+    0, ' '
+};
+
+const char CapsLookUpTable[] = {
+    0, 0, '!', '@',
+    '#', '$', '%', '^',
+    '&', '*', '(', ')',
+    '_', '+', '\r', '\t',
+    'Q', 'W', 'E', 'R',
+    'T', 'Y', 'U', 'I',
+    'O', 'P', '{', '}',
+    '\n', 0, 'A', 'S',
+    'D', 'F', 'G', 'H',
+    'J', 'K', 'L', ':',
+    '"', '~', 0, '|',
+    'Z', 'X', 'C', 'V',
+    'B', 'N', 'M', '<',
+    '>', '?', 0, '*',
     0, ' '
 };
 
@@ -71,16 +91,6 @@ void enableAllInterrupts(){
     debugPrint("All Interrupts Enabled\n\r");
 }
 
-void set_pit_count(unsigned count) {
- 
-	outb(0x40,count&0xFF);		// Low byte
-	outb(0x40,(count&0xFF00)>>8);	// High byte
-
-    reload = count / (3579545 / 3) * 100;
-	return;
-}
-
-
 void IDT_ENABLEINT(int interrupt, uint64_t* isr, uint8_t ist = 0, uint8_t flags = 0x8e, uint16_t selector = 0x08){
         _idt[interrupt+32].zero = 0;
         _idt[interrupt+32].offsetLow = (uint16_t)(((uint64_t)isr & 0x000000000000ffff));
@@ -93,10 +103,17 @@ void IDT_ENABLEINT(int interrupt, uint64_t* isr, uint8_t ist = 0, uint8_t flags 
 
 extern "C" void keyboardHandler(){
     byte code = inb(0x60);
-    if(code < 59){
-        lastKey = (!shiftBit ? ScanCodeLookupTable[code] : (ScanCodeLookupTable[code] - 32));
+    if(code == 0x36 || code == 0x2A){
+        shiftBit = true;
+    }
+    else if(code == 0xAA || code == 0xB6){
+        shiftBit = false;
+    }
+    else if(code < 59){
+        lastKey = (!shiftBit ? ScanCodeLookupTable[code] : CapsLookUpTable[code]);
         keyPressed = true;
     }
+    
     PIC_sendEOI(1);
 }
 bool irq6 = false;
@@ -107,9 +124,21 @@ extern "C" void floppyHandler(){
     irq6 = true;
     PIC_sendEOI(6);
 }
-
+bool cursorflashed = false;
 extern "C" void PITHandler(){
-    second += reload;
+    count++;
+    if(count == reload && cursorflashed){
+        count = 0;
+        seconds++;
+        TTY1.putCursor();
+        cursorflashed = false;
+    }
+    else if(count == reload){
+        count = 0;
+        seconds++;
+        TTY1.removeCursor();
+        cursorflashed = true;
+    }
     PIC_sendEOI(0);
 }
 
@@ -141,12 +170,15 @@ void x64IDT_INIT(){
 
     IDT_ENABLEINT(1,&ISR1);
     IDT_ENABLEINT(6,&ISR6);
+    IDT_ENABLEINT(0,&ISR0);
 
     IRQ_clear_mask(1);      //PS-2
     IRQ_clear_mask(6);      //FDC
-
+    IRQ_clear_mask(0);
 
     lidt(_idt, 128*256 - 1);
+
+  
 
     __STI;
 

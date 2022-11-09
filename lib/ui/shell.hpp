@@ -7,6 +7,7 @@
 #include <proc.hpp>
 #include <time.hpp>
 
-int OpenOS_proc_shell(PROCESS_T* proc);
+int OpenOS_proc_shell(PROCESS_T* proc, int argc, char** argv);
 
 #endif
+

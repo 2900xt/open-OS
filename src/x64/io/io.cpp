@@ -16,6 +16,10 @@ void debugPrintInteger(qword i){
 	debugPrint(IntegerToString(i));
 }
 
+void outw(unsigned short port, unsigned short val){
+  asm volatile ("outw %0, %1" : : "Na"(val), "Nd"(port));
+}
+
 char getChar(){
 	while(!keyPressed);
 	keyPressed = false;

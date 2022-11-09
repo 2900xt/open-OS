@@ -1,6 +1,12 @@
 CROSS = /usr/local/x86_64elfgcc/bin/x86_64-elf-g++
 LD = /usr/local/x86_64elfgcc/bin/x86_64-elf-ld -z max-page-size=0x1000 -Ttext 0x8000
 CCFLAGS = -Ttext 0x8000 -ffreestanding -mno-red-zone -m64 -Wwrite-strings -nostdlib -I lib
+CROSS += $(CCFLAGS)
+
+.PHONY: test all run
+
+test: all run
+
 
 all:
 
@@ -11,17 +17,17 @@ all:
 
 	nasm -o bin/stage2.elf -felf64 src/boot/stage2/stage2.s
 
-	$(CROSS) $(CCFLAGS) -o bin/kmain.elf -c src/x64/kmain.cpp
-	$(CROSS) $(CCFLAGS) -o bin/io.elf -c src/x64/io/io.cpp
-	$(CROSS) $(CCFLAGS) -o bin/tty.elf -c src/x64/io/tty.cpp
-	$(CROSS) $(CCFLAGS) -o bin/idt.elf -c src/x64/int/idt.cpp
-	$(CROSS) $(CCFLAGS) -o bin/pic.elf -c src/x64/int/pic.cpp
-	$(CROSS) $(CCFLAGS) -o bin/mem.elf -c src/x64/mem/mem.cpp
-	$(CROSS) $(CCFLAGS) -o bin/tfs.elf -c src/x64/fs/tfs.cpp
-	$(CROSS) $(CCFLAGS) -o bin/fdc.elf -c src/x64/fs/fdc.cpp
-	$(CROSS) $(CCFLAGS) -o bin/proc.elf -c src/x64/mem/proc.cpp
-	$(CROSS) $(CCFLAGS) -o bin/time.elf -c src/x64/io/time.cpp
-	$(CROSS) $(CCFLAGS) -o bin/shell.elf -c src/x64/ui/shell.cpp
+	$(CROSS)  -o bin/kmain.elf -c src/x64/kmain.cpp
+	$(CROSS) -o bin/io.elf -c src/x64/io/io.cpp
+	$(CROSS) -o bin/tty.elf -c src/x64/io/tty.cpp
+	$(CROSS) -o bin/idt.elf -c src/x64/int/idt.cpp
+	$(CROSS) -o bin/pic.elf -c src/x64/int/pic.cpp
+	$(CROSS) -o bin/mem.elf -c src/x64/mem/mem.cpp
+	$(CROSS) -o bin/tfs.elf -c src/x64/fs/tfs.cpp
+	$(CROSS) -o bin/fdc.elf -c src/x64/fs/fdc.cpp
+	$(CROSS) -o bin/proc.elf -c src/x64/mem/proc.cpp
+	$(CROSS) -o bin/time.elf -c src/x64/io/time.cpp
+	$(CROSS) -o bin/shell.elf -c src/x64/ui/shell.cpp
 
 
 	$(LD) -T "link.ld"
@@ -32,3 +38,8 @@ all:
 
 run:
 	bochs -q
+
+
+
+
+

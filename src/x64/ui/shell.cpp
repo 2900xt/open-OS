@@ -18,7 +18,7 @@ char* getLine(){
     }
 }
 
-int debug_CMD(PROCESS_T* proc){
+int debug_CMD(PROCESS_T* proc, int argc, char** argv){
 
     char* out;
 
@@ -34,15 +34,36 @@ int debug_CMD(PROCESS_T* proc){
     return 0;
 }
 
-int time_CMD(PROCESS_T* proc){
+int time_CMD(PROCESS_T* proc, int argc, char** argv){
     TIME_T currentTime;
     readRTC(&currentTime);
     TTY1.printf("\n%c%s%c Current Time: \n%d:%d:%d\n\n%c%s%c Date:\n%d/%d/%d\n",LRED,proc->name,WHITE,currentTime.hour,currentTime.minute,currentTime.second,LRED,proc->name,WHITE,currentTime.day,currentTime.month,currentTime.year);
     return 0;
 }
 
-int version_CMD(PROCESS_T* proc){
-    TTY1.printf("\n%c%s%c OPEN-OS %s%c",LRED, proc->name, PURPLE, OPENOS_VERSION, WHITE );
+int version_CMD(PROCESS_T* proc, int argc, char** argv){
+    TTY1.printf("\n%c%s%c OPEN-OS %s%c",LRED, proc->name, PURPLE, OPENOS_VERSION, WHITE);
+}
+
+int ls_CMD(PROCESS_T* proc, int argc, char** argv){
+    //Display files in current DIR to TTY1
+
+    if(!openFile(proc, OPENOS_ROOT))
+        return -2;
+    if(proc->file == nullptr || proc->file->objectParent == nullptr)
+        return -1;
+
+    while(*proc->file->objectSub)
+        TTY1.printf("%c%s%c %s\n",LRED,proc->name, WHITE, proc->file->objectPath);
+}
+
+int uptime_CMD(PROCESS_T* proc, int argc, char** argv){
+    TTY1.printf("%c%s%c %d%c seconds of uptime\n",LRED,proc->name,GREEN,seconds,WHITE);
+}
+
+int break_CMD(PROCESS_T* proc, int argc, char** argv){
+    TTY1.printf("%c%s%c Break!\n",LRED, proc->name, WHITE);
+    MagicBreak();
 }
 
 bool cmdCheck(const char* a, const char* b){
@@ -53,16 +74,28 @@ bool cmdCheck(const char* a, const char* b){
     return true;
 }
 
+//Commands in **argv will be executed
 
-int OpenOS_proc_shell(PROCESS_T* proc){
-
-    int exitCode = 0;
-    PROCESS_T* CURRENT_COMMAND = nullptr;
-
-    getCommand:
+int OpenOS_proc_shell(PROCESS_T* proc, int argc, char** argv){
 
     for(int i = 0; i < 80; i++)
         commandBuffer[i] = 0;
+
+    int bufferPtr = 0;
+    int exitCode = 0;
+    PROCESS_T* CURRENT_COMMAND = nullptr;
+
+    if(argv == nullptr)
+        goto getCommand;
+
+    if(argc && strlen(*argv) < 80){
+        memcpy(commandBuffer, *argv, strlen(*argv));
+        bufferPtr += strlen(commandBuffer) + 1;
+    }
+
+    goto processCommand;
+
+    getCommand:
 
     TTY1.printf("\n[%c%d%c]->",(exitCode ? RED : GREEN), exitCode, WHITE);
 
@@ -74,6 +107,12 @@ int OpenOS_proc_shell(PROCESS_T* proc){
             goto processCommand;
         }else if(commandBuffer[i] == ' '){
             commandBuffer[i] = '\0';
+        }
+        else if(commandBuffer[i] == '\r'){
+            commandBuffer[i--] = 0;
+            commandBuffer[i--] = 0;
+            TTY1.backspace();
+            continue;
         }
         TTY1.putChar(commandBuffer[i]);
     }
@@ -89,11 +128,24 @@ int OpenOS_proc_shell(PROCESS_T* proc){
     else if(cmdCheck("version", commandBuffer)){
         CURRENT_COMMAND = createProc(proc,"[version]",proc->permissions, version_CMD);
     }
+    else if(cmdCheck("ls", commandBuffer)){
+        CURRENT_COMMAND = createProc(proc,"[fs]",proc->permissions, ls_CMD);
+        CURRENT_COMMAND->file = proc->file;
+    }
+    else if(cmdCheck("uptime", commandBuffer)){
+        CURRENT_COMMAND = createProc(proc, "[INIT]", proc->permissions, uptime_CMD);
+    }
+    else if(cmdCheck("break", commandBuffer)){
+        CURRENT_COMMAND = createProc(proc, "[INIT]", proc->permissions, break_CMD);
+    }
+    else if(cmdCheck("shutdown", commandBuffer)){
+        outw( 0xB004, 0x0 | 0x2000 );
+    }
 
     runCommand:
     
     if(CURRENT_COMMAND != nullptr){
-        exitCode = runProc(CURRENT_COMMAND);
+        exitCode = runProc(CURRENT_COMMAND, 0, nullptr);
         killProc(CURRENT_COMMAND);
         CURRENT_COMMAND = nullptr;
     }

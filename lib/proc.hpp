@@ -39,7 +39,9 @@ struct PROCESS_T
 };
 
 
-PROCESS_T* createProc(PROCESS_T* parent, const char* name , PROCESS_PERMISSIONS permissions, int (code)(PROCESS_T*));
-int runProc(PROCESS_T* proc);
+PROCESS_T* createProc(PROCESS_T* parent, const char* name , PROCESS_PERMISSIONS permissions, int (code)(PROCESS_T*, int, char**));
+int runProc(PROCESS_T* proc, int argc, char** argv);
 bool killProc(PROCESS_T* proc);
+
+void* openFile(PROCESS_T* proc,FileObjectDescriptor* file);
 #endif

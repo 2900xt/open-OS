@@ -16,19 +16,21 @@ enum fileTypes_t{
 
 
 struct FileObjectDescriptor{
-    GSL::String             objectName;
+    GSL::String             objectPath;
     fileTypes_t             objectType;
     void*                   objectData;
     bool                    objectInUse;
     int                     objectSubCount;
+    FileObjectDescriptor**  objectSub;
     FileObjectDescriptor*   objectParent;
 };
+
 
 void initializeRoot(FileObjectDescriptor* OPENOS_ROOT);
 GSL::String* returnFilePath(FileObjectDescriptor* file);
 
 FileObjectDescriptor* makeNewDir(FileObjectDescriptor* directory, const char* name); 
 
-
+extern FileObjectDescriptor* OPENOS_ROOT;
 byte* FDCInitialize();
 #endif

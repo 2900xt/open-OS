@@ -4,7 +4,7 @@ FileObjectDescriptor* currentDirectory;
 
 void initializeRoot(FileObjectDescriptor* OPENOS_ROOT){
 
-    OPENOS_ROOT->objectName = "/";
+    OPENOS_ROOT->objectPath = "/";
     OPENOS_ROOT->objectType = DIR_TYPE;
     OPENOS_ROOT->objectData = NULL;
     OPENOS_ROOT->objectInUse = true;
@@ -25,11 +25,14 @@ FileObjectDescriptor* makeNewDir(FileObjectDescriptor* parent, const char* name)
     }
 
     FileObjectDescriptor* newFile = NEW(FileObjectDescriptor);
-    newFile->objectName = name;
+    newFile->objectPath = name;
     newFile->objectType = DIR_TYPE;
     newFile->objectData = (void*)FSlevel;
     newFile->objectParent = parent;
     newFile->objectInUse = false;
+    newFile->objectSubCount = 0;
+    newFile->objectSub = nullptr;
+    parent->objectSub[parent->objectSubCount++] = newFile;
 
     return newFile;
 }
@@ -39,5 +42,5 @@ FileObjectDescriptor* makeNewFile(FileObjectDescriptor* parent, const char* name
     newFile->objectParent = parent;
     newFile->objectInUse = false;
     newFile->objectType = type;
-    newFile->objectName = name;
+    newFile->objectPath = name;
 }

@@ -46,3 +46,12 @@ ISR6:
 	call floppyHandler
 	POPALL
 	iretq
+
+[extern PITHandler]
+
+GLOBAl ISR0
+ISR0:
+	PUSHALL
+	call PITHandler
+	POPALL
+	iretq

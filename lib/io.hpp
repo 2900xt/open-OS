@@ -42,6 +42,7 @@ extern "C" byte memoryRegionCount;
 
 void MagicBreak();
 char getChar();
+void outw(unsigned short port, unsigned short val);
 void printMemoryInformation(const char* proc);
 void debugPrint(string str);
 void memset(void* start, qword value, qword num);

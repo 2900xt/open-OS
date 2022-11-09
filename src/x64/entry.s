@@ -17,6 +17,7 @@ entry64:
     or ax, 0b1100000000
     mov cr4, rax
 
+
     [extern setup64]
     call setup64    
 

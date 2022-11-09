@@ -213,6 +213,25 @@ class VGA{
             va_end(valist);
         }
 
+        void backspace(){
+            Screen_x -=8;
+            putChar(' ');
+            Screen_x -=8;
+        }
+
+        void putCursor(){
+            Screen_x +=8;
+            putChar('_');
+            Screen_x -=16;
+        }
+
+        void removeCursor(){
+            Screen_x +=8;
+            putChar(' ');
+            Screen_x -=16;
+        }
+
+
 };
 
 

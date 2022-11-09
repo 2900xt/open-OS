@@ -22,6 +22,8 @@ enum CMOS_REGS
     CMOS_DATA       = 0x71
 };
 
+extern int seconds;
+
 void readRTC(TIME_T* current);
 
 #endif
