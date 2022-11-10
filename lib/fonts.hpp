@@ -220,15 +220,13 @@ class VGA{
         }
 
         void putCursor(){
-            Screen_x +=8;
             putChar('_');
-            Screen_x -=16;
+            Screen_x -=8;
         }
 
         void removeCursor(){
-            Screen_x +=8;
             putChar(' ');
-            Screen_x -=16;
+            Screen_x -=8;
         }
 
 
