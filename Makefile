@@ -33,8 +33,12 @@ all:
 	$(LD) -T "link.ld"
 
 	dd if=/dev/zero of=bin/open-os.flp bs=512 count=2880
-	cat bin/bootsect.bin bin/Kernel.bin > bin/os.bin
-	dd if=bin/os.bin of=bin/open-os.flp conv=notrunc
+	mkfs.fat -F 12 -n "OPEN-OS" bin/open-os.flp
+	dd if=bin/bootsect.bin of=bin/open-os.flp conv=notrunc
+	mcopy -i bin/open-os.flp bin/Kernel.bin "::kernel.bin"
+	rm debug/img.txt
+	xxd -d -a bin/open-os.flp debug/img.txt
+
 
 run:
 	bochs -q
