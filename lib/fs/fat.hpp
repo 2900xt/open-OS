@@ -156,3 +156,4 @@ void FDCReadSector_LBA(byte drive, word lba);
 void readBootSector();
 void readFAT();
 void readRootDirectory();
+void readFile(FAT12_directory* fileEntry, void* buffer);

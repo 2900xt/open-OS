@@ -51,11 +51,14 @@ int ls_CMD(PROCESS_T* proc, int argc, char** argv){
     int i = 0;
     int size = 0;
     TTY1.printf("Volume in drive : %c%s%c\n",LBLUE,g_rootDirectory[i++].name,WHITE);
-    while(i < 3){
+    while(i < sizeof(FAT12_directory) * g_BootSectorData->directoryEntryCount){
+        if(g_rootDirectory[i].size == 0){
+            break;
+        }
         TTY1.printf("%s\n",g_rootDirectory[i].name);
         size += g_rootDirectory[i++].size;
     }
-    TTY1.printf("%d Files Total , %d bytes\n",i-1,size);
+    TTY1.printf("%d Files Total , %d bytes",i-1,size);
     return 0;
 }
 
