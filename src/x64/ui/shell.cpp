@@ -1,4 +1,5 @@
 #include <ui/shell.hpp>
+#include <fs/fat.hpp>
 
 char inputBuffer[80];
 char commandBuffer[80];
@@ -47,14 +48,15 @@ int version_CMD(PROCESS_T* proc, int argc, char** argv){
 
 int ls_CMD(PROCESS_T* proc, int argc, char** argv){
     //Display files in current DIR to TTY1
-
-    if(!openFile(proc, OPENOS_ROOT))
-        return -2;
-    if(proc->file == nullptr || proc->file->objectParent == nullptr)
-        return -1;
-
-    while(*proc->file->objectSub)
-        TTY1.printf("%c%s%c %s\n",LRED,proc->name, WHITE, proc->file->objectPath);
+    int i = 0;
+    int size = 0;
+    TTY1.printf("Volume in drive : %c%s%c\n",LBLUE,g_rootDirectory[i++].name,WHITE);
+    while(i < 3){
+        TTY1.printf("%s\n",g_rootDirectory[i].name);
+        size += g_rootDirectory[i++].size;
+    }
+    TTY1.printf("%d Files Total , %d bytes\n",i-1,size);
+    return 0;
 }
 
 int uptime_CMD(PROCESS_T* proc, int argc, char** argv){
@@ -130,7 +132,6 @@ int OpenOS_proc_shell(PROCESS_T* proc, int argc, char** argv){
     }
     else if(cmdCheck("ls", commandBuffer)){
         CURRENT_COMMAND = createProc(proc,"[fs]",proc->permissions, ls_CMD);
-        CURRENT_COMMAND->file = proc->file;
     }
     else if(cmdCheck("uptime", commandBuffer)){
         CURRENT_COMMAND = createProc(proc, "[INIT]", proc->permissions, uptime_CMD);

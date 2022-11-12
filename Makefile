@@ -23,11 +23,11 @@ all:
 	$(CROSS) -o bin/idt.elf -c src/x64/int/idt.cpp
 	$(CROSS) -o bin/pic.elf -c src/x64/int/pic.cpp
 	$(CROSS) -o bin/mem.elf -c src/x64/mem/mem.cpp
-	$(CROSS) -o bin/tfs.elf -c src/x64/fs/tfs.cpp
 	$(CROSS) -o bin/fdc.elf -c src/x64/fs/fdc.cpp
 	$(CROSS) -o bin/proc.elf -c src/x64/mem/proc.cpp
 	$(CROSS) -o bin/time.elf -c src/x64/io/time.cpp
 	$(CROSS) -o bin/shell.elf -c src/x64/ui/shell.cpp
+	$(CROSS) -o bin/fat.elf -c src/x64/fs/fat.cpp
 
 
 	$(LD) -T "link.ld"
@@ -36,6 +36,7 @@ all:
 	mkfs.fat -F 12 -n "OPEN-OS" bin/open-os.flp
 	dd if=bin/bootsect.bin of=bin/open-os.flp conv=notrunc
 	mcopy -i bin/open-os.flp bin/Kernel.bin "::kernel.bin"
+	mcopy -i bin/open-os.flp debug/test.txt "::test.txt"
 	rm debug/img.txt
 	xxd -d -a bin/open-os.flp debug/img.txt
 

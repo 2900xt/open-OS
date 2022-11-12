@@ -3,7 +3,6 @@
 
 #include <fonts.hpp>
 #include <io.hpp>
-#include <fs/tfs.hpp>
 
 #define OPENOS_VERSION "0.001 INDEV"
 
@@ -33,7 +32,6 @@ struct PROCESS_T
     qword code;
     PROCESS_T* parent;
     PROCESS_T* child;
-    FileObjectDescriptor* file;
     PROCESS_PERMISSIONS permissions;
     PROCESS_STATES state;
 };
@@ -43,5 +41,4 @@ PROCESS_T* createProc(PROCESS_T* parent, const char* name , PROCESS_PERMISSIONS 
 int runProc(PROCESS_T* proc, int argc, char** argv);
 bool killProc(PROCESS_T* proc);
 
-void* openFile(PROCESS_T* proc,FileObjectDescriptor* file);
 #endif

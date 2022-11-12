@@ -12,7 +12,7 @@ INPUT(
     pic.elf
     idt.elf
     mem.elf
-    tfs.elf
+    fat.elf
     fdc.elf
     proc.elf
     time.elf

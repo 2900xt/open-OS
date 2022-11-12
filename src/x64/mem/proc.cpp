@@ -8,7 +8,6 @@ PROCESS_T* createProc(PROCESS_T* parent, const char* name , PROCESS_PERMISSIONS 
     if(parent->permissions < permissions)
         return nullptr;
     
-    parent->child->file = nullptr;
     parent->child->permissions = (PROCESS_PERMISSIONS)((int)permissions & (int)parent->permissions);
     parent->child->code = (qword)code;
     parent->child->name = name;
@@ -30,16 +29,4 @@ bool killProc(PROCESS_T* proc){
     
     free(proc);
     return true;
-}
-
-void* openFile(PROCESS_T* proc,FileObjectDescriptor* file){
-    if(proc->permissions <= PROCESS_PERMISSIONS::FS && proc->state == PROCESS_STATES::FOREGROUND)
-        return nullptr;
-    
-    if(!proc->file)
-        return nullptr;
-    
-    proc->file = file;
-
-    return proc->file->objectData;
 }
