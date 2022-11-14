@@ -50,6 +50,7 @@ int ls_CMD(PROCESS_T* proc, int argc, char** argv){
     //Display files in current DIR to TTY1
     int i = 0;
     int size = 0;
+    TTY1.printf("%x\n",g_rootDirectory);
     TTY1.printf("Volume in drive : %c%s%c\n",LBLUE,g_rootDirectory[i++].name,WHITE);
     while(i < sizeof(FAT12_directory) * g_BootSectorData->directoryEntryCount){
         if(g_rootDirectory[i].size == 0){

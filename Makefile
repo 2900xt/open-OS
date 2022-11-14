@@ -36,6 +36,7 @@ all:
 	mkfs.fat -F 12 -n "OPEN-OS" bin/open-os.flp
 	dd if=bin/bootsect.bin of=bin/open-os.flp conv=notrunc
 	mcopy -i bin/open-os.flp bin/Kernel.bin "::kernel.bin"
+	mcopy -i bin/open-os.flp debug/test.txt "::test.txt"
 	rm debug/img.txt
 	xxd -d -a -e bin/open-os.flp debug/img.txt
 

@@ -24,9 +24,10 @@ int init(PROCESS_T* proc, int argc, char** argv){
 
     TTY1.printf("\nCurrent Time: \n%d:%d:%d\n\nDate:\n%d/%d/%d\n",currentTime.hour,currentTime.minute,currentTime.second,currentTime.day,currentTime.month,currentTime.year);
 
-    readBootSector();
-    readFAT();
-    readRootDirectory();
+    loadRoot();
+    char* data = (char*)loadFile((char*)"TEST    TXT");
+    TTY1.printf("%s\n", data);
+    
 
     PROCESS_T* OpenOS_Shell = createProc(proc,"[SHELL]", PROCESS_PERMISSIONS::ROOT, OpenOS_proc_shell);
 

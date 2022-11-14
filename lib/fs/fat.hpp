@@ -95,18 +95,21 @@ enum FD_GAP3
     GAP3_3_5    = 27
 };
 
-struct CHS{
+struct CHS
+{
     byte cyl;
     byte head;
     byte sector;
 };
 
-struct sense_interrupt_data{
+struct sense_interrupt_data
+{
     byte st0;
     byte cyl;
 };
 
-struct operation_data{
+struct operation_data
+{
     byte st0;
     byte st1;
     byte st2;
@@ -115,7 +118,8 @@ struct operation_data{
     byte sector;
 };
 
-struct FAT12_bootSectorData{
+struct FAT12_bootSectorData
+{
     byte nop[3];
     byte vendorID[8];
     word bytesPerSector;
@@ -131,8 +135,9 @@ struct FAT12_bootSectorData{
 }__attribute__((packed));
 
 
-struct FAT12_directory{
-    byte name[11];
+struct FAT12_directory
+{
+    char name[11];
     byte attributes;
     byte reserved;
     byte createdTimeTenths;
@@ -146,14 +151,24 @@ struct FAT12_directory{
     dword size;
 }__attribute__((packed));
 
+enum FAT12_FileAttributes
+{    
+    FAT12_ATTRIBUTE_read_only       = 0b00000001,
+    FAT12_ATTRIBUTE_hidden          = 0b00000010,
+    FAT12_ATTRIBUTE_system          = 0b00000100,
+    FAT12_ATTRIBUTE_volume_label    = 0b00001000,
+    FAT12_ATTRIBUTE_subdir          = 0b00010000,
+    FAT12_ATTRIBUTE_archive         = 0b00100000,
+    FAT12_ATTRIBUTE_device          = 0b01000000,
+};
 
 extern FAT12_bootSectorData* g_BootSectorData;
 extern FAT12_directory* g_rootDirectory;
-extern byte* g_FAT;
+extern void* g_FAT;
 
 byte* FDCInitialize();
 void FDCReadSector_LBA(byte drive, word lba);
 void readBootSector();
-void readFAT();
-void readRootDirectory();
+void* loadFile(char* filename);
+void loadRoot();
 void readFile(FAT12_directory* fileEntry, void* buffer);
