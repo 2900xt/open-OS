@@ -27,11 +27,9 @@ int init(PROCESS_T* proc, int argc, char** argv){
     loadRoot();
     char* data = (char*)loadFile((char*)"TEST    TXT");
     TTY1.printf("%s\n", data);
-    
 
-    PROCESS_T* OpenOS_Shell = createProc(proc,"[SHELL]", PROCESS_PERMISSIONS::ROOT, OpenOS_proc_shell);
-
-    runProc(OpenOS_Shell, 0, nullptr);
+   asm("hlt");
+   asm("sti");
 
 }
 
