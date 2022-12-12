@@ -21,32 +21,6 @@ extern "C" qword ISR6;
 extern "C" qword ISR0;
 extern "C" void enablePIT();
 
-
- extern "C" qword exc0;
- extern "C" qword exc1;
- extern "C" qword exc2;
- extern "C" qword exc3;
- extern "C" qword exc4;
- extern "C" qword exc5;
- extern "C" qword exc6;
- extern "C" qword exc7;
- extern "C" qword exc8;
- extern "C" qword exc9;
- extern "C" qword exc10;
- extern "C" qword exc11;
- extern "C" qword exc12;
- extern "C" qword exc13;
- extern "C" qword exc14;
- extern "C" qword exc16;
- extern "C" qword exc17;
- extern "C" qword exc18;
- extern "C" qword exc19;
- extern "C" qword exc20;
- extern "C" qword exc21;
- extern "C" qword exc28;
- extern "C" qword exc29;
- extern "C" qword exc30;
-
 int seconds = 0;
 int count = 0;
 int reload = 650;
@@ -127,16 +101,6 @@ void IDT_ENABLEINT(int interrupt, uint64_t* isr, uint8_t ist = 0, uint8_t flags 
         _idt[interrupt+32].flags = flags;
 }
 
-void IDT_ENABLEEXC(int interrupt, uint64_t* isr, uint8_t ist = 0, uint8_t flags = 0x8f, uint16_t selector = 0x08){
-        _idt[interrupt].zero = 0;
-        _idt[interrupt].offsetLow = (uint16_t)(((uint64_t)isr & 0x000000000000ffff));
-        _idt[interrupt].offsetMid = (uint16_t)(((uint64_t)isr & 0x00000000ffff0000) >> 16);
-        _idt[interrupt].offsetHigh = (uint32_t)(((uint64_t)isr & 0xffffffff00000000) >> 32);
-        _idt[interrupt].IST = ist;
-        _idt[interrupt].selector = selector;
-        _idt[interrupt].flags = flags;
-}
-
 extern "C" void keyboardHandler(){
     byte code = inb(0x60);
     if(code == 0x36 || code == 0x2A){
@@ -212,32 +176,10 @@ void x64IDT_INIT(){
     IRQ_clear_mask(6);      //FDC
     IRQ_clear_mask(0);
 
-    IDT_ENABLEEXC(0,&exc0);
-    IDT_ENABLEEXC(1,&exc1);
-    IDT_ENABLEEXC(2,&exc2);
-    IDT_ENABLEEXC(3,&exc3);
-    IDT_ENABLEEXC(4,&exc4);
-    IDT_ENABLEEXC(5,&exc5);
-    IDT_ENABLEEXC(6,&exc6);
-    IDT_ENABLEEXC(7,&exc7);
-    IDT_ENABLEEXC(8,&exc8);
-    IDT_ENABLEEXC(9,&exc9);
-    IDT_ENABLEEXC(10,&exc10);
-    IDT_ENABLEEXC(11,&exc11);
-    IDT_ENABLEEXC(12,&exc12);
-    IDT_ENABLEEXC(13,&exc13);
-    IDT_ENABLEEXC(14,&exc14);
-    IDT_ENABLEEXC(16,&exc16);
-    IDT_ENABLEEXC(17,&exc17);
-    IDT_ENABLEEXC(18,&exc18);
-    IDT_ENABLEEXC(19,&exc19);
-    IDT_ENABLEEXC(20,&exc20);
-    IDT_ENABLEEXC(21,&exc21);
-    IDT_ENABLEEXC(28,&exc28);
-    IDT_ENABLEEXC(29,&exc29);
-    IDT_ENABLEEXC(30,&exc30);
-
     lidt(_idt, 128*256 - 1);
+
+  
+
     __STI;
 
     return;
