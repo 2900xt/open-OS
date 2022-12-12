@@ -36,8 +36,8 @@ bool cmpFile(char* s1, char* s2){
     return true;
 }
 
-void* loadFile(char* filename){
-
+void* loadFile(char* filename)
+{
     int i;
     for(i = 0; i < g_BootSectorData->directoryEntryCount; i++){
         if(cmpFile(g_rootDirectory[i].name, filename)){
@@ -77,8 +77,7 @@ void* loadFile(char* filename){
 
     } while (cluster < 0x0FF8);
 
+    free(FAT);
+
     return buffer;
-
-
-
 }
