@@ -36,7 +36,7 @@ start:
     mov bp, 0x7c00
     mov sp, bp
 
-    ;Read the first file in the root directory and start executing it
+    ;Read the bootloader in the root directory and start executing it
 
     mov [EBR.DiskNumber], dl
 
