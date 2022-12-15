@@ -1,7 +1,9 @@
-#include <types.hpp>
-#include <kernel/stdout.h>
+#include <types.h>
+#include <stdout.h>
+#include <stdlib.h>
 
 extern "C" void _start(void) {
     stdoutINIT();
-    putChar('h');
+    heapInit(0x100000, 0x100000);
+    printf("Hello, World!");
 }

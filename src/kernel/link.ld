@@ -6,7 +6,8 @@ SEARCH_DIR(obj/kernel)
 
 INPUT(
     kernel.elf
-    vga.elf
+    stdout.elf
+    mem.elf
 )
 
 OUTPUT(
@@ -14,6 +15,8 @@ OUTPUT(
 )
 
 SECTIONS{
+    . = 0x20000;
+    
     .text : ALIGN(0x1000)
     {
         *(.text)

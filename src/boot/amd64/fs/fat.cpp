@@ -1,23 +1,20 @@
-#include <fonts.hpp>
 #include <fs/fat.hpp>
 #include <io.hpp>
 
 
-FAT12_bootSectorData* g_BootSectorData;
-FAT12_directory* g_rootDirectory;
+FAT12_bootSectorData* g_BootSectorData = (FAT12_bootSectorData*)0x15000;
+FAT12_directory* g_rootDirectory = (FAT12_directory*)0x16000;
 
 void readBootSector()
 {
-    FDCReadSector_LBA(0, 0);                            //Read the Bootsector
-    g_BootSectorData = NEW(FAT12_bootSectorData);       //Copy the BPB into memory
+    FDCReadSector_LBA(0, 0);                            //Read the Bootsectors
     memcpy(g_BootSectorData,(void*)0x1000,32);
 }
 
 void loadRoot()
 {
     readBootSector();
-    int rootSectors = (sizeof(FAT12_directory) * g_BootSectorData->directoryEntryCount) / g_BootSectorData->bytesPerSector;     
-    g_rootDirectory = (FAT12_directory*)malloc(rootSectors * g_BootSectorData->bytesPerSector);
+    int rootSectors = (sizeof(FAT12_directory) * g_BootSectorData->directoryEntryCount) / g_BootSectorData->bytesPerSector;
 
     int StartingLBA = g_BootSectorData->FATCount * g_BootSectorData->sectorsPerFat + g_BootSectorData->reservedSectors;
     int FinishingLBA = StartingLBA + rootSectors - 4;
@@ -54,7 +51,7 @@ void* loadFile(char* filename)
     int cluster = g_rootDirectory[i].firstClusterLow;
     int fatSize = g_BootSectorData->FATCount * g_BootSectorData->sectorsPerFat;
 
-    void* FAT = malloc(fatSize * g_BootSectorData->bytesPerSector);
+    void* FAT = (void*)0x10000;
 
     for(int sector = 0; sector < fatSize; sector++){
         FDCReadSector_LBA(0, sector + 1);
@@ -62,7 +59,7 @@ void* loadFile(char* filename)
     }
 
 
-    void* buffer = malloc(fileSize + 512);
+    void* buffer = (void*)0x20000;
     int bufferPtr = 0;
     do {
         uint32_t lba = 33 + (cluster - 2) * g_BootSectorData->clusterSize;
@@ -75,11 +72,8 @@ void* loadFile(char* filename)
             cluster = (*(uint16_t*)(FAT + fatIndex)) & 0x0FFF;
         else
             cluster = (*(uint16_t*)(FAT + fatIndex)) >> 4;
-        
 
     } while (cluster < 0x0FF8);
-
-    free(FAT);
 
     return buffer;
 }

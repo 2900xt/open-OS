@@ -1,5 +1,7 @@
 #pragma once
 
+#include <types.hpp>
+
 enum FDTypes
 {
     noDrive = 0,

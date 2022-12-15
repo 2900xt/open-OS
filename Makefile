@@ -1,7 +1,7 @@
 CROSS = /usr/local/x86_64elfgcc/bin/x86_64-elf-g++
-LD = /usr/local/x86_64elfgcc/bin/x86_64-elf-ld -z max-page-size=0x1000 -Ttext 0x8000
-CCFLAGS = -Ttext 0x8000 -ffreestanding -mno-red-zone -m64 -Wwrite-strings -nostdlib -I lib/boot -I lib
-CROSS += $(CCFLAGS)
+LD = /usr/local/x86_64elfgcc/bin/x86_64-elf-ld -z max-page-size=0x1000
+CCFLAGS_BOOT = -Ttext 0x8000 -ffreestanding -mno-red-zone -m64 -Wwrite-strings -nostdlib -I lib/boot
+CCFLAGS_KERNEL = -Ttext 0x20000 -ffreestanding -mno-red-zone -m64 -Wwrite-strings -nostdlib -I lib/kernel
 
 BOOTLOADER = src/boot/amd64
 KERNEL = src/kernel
@@ -22,20 +22,20 @@ bootloader:
 
 	nasm -o $(OBJDIR_BOOT)/stage2.elf -felf64 src/boot/i686/stage2.s
 
-	$(CROSS)  -o $(OBJDIR_BOOT)/bootloader.elf -c $(BOOTLOADER)/init.cpp
-	$(CROSS) -o $(OBJDIR_BOOT)/io.elf -c $(BOOTLOADER)/io/io.cpp
-	$(CROSS) -o $(OBJDIR_BOOT)/tty.elf -c $(BOOTLOADER)/io/tty.cpp
-	$(CROSS) -o $(OBJDIR_BOOT)/idt.elf -c $(BOOTLOADER)/int/idt.cpp
-	$(CROSS) -o $(OBJDIR_BOOT)/pic.elf -c $(BOOTLOADER)/int/pic.cpp
-	$(CROSS) -o $(OBJDIR_BOOT)/mem.elf -c $(BOOTLOADER)/mem/mem.cpp
-	$(CROSS) -o $(OBJDIR_BOOT)/fdc.elf -c $(BOOTLOADER)/fs/fdc.cpp
-	$(CROSS) -o $(OBJDIR_BOOT)/fat.elf -c $(BOOTLOADER)/fs/fat.cpp
+	$(CROSS) $(CCFLAGS_BOOT) -o $(OBJDIR_BOOT)/bootloader.elf -c $(BOOTLOADER)/init.cpp
+	$(CROSS) $(CCFLAGS_BOOT) -o $(OBJDIR_BOOT)/io.elf -c $(BOOTLOADER)/io/io.cpp
+	$(CROSS) $(CCFLAGS_BOOT) -o $(OBJDIR_BOOT)/idt.elf -c $(BOOTLOADER)/int/idt.cpp
+	$(CROSS) $(CCFLAGS_BOOT) -o $(OBJDIR_BOOT)/pic.elf -c $(BOOTLOADER)/int/pic.cpp
+	$(CROSS) $(CCFLAGS_BOOT) -o $(OBJDIR_BOOT)/mem.elf -c $(BOOTLOADER)/mem/mem.cpp
+	$(CROSS) $(CCFLAGS_BOOT) -o $(OBJDIR_BOOT)/fdc.elf -c $(BOOTLOADER)/fs/fdc.cpp
+	$(CROSS) $(CCFLAGS_BOOT) -o $(OBJDIR_BOOT)/fat.elf -c $(BOOTLOADER)/fs/fat.cpp
 
 	$(LD) -T src/boot/link.ld
 
 kernel:
-	$(CROSS) -o $(OBJDIR_KERNEL)/kernel.elf -c $(KERNEL)/kernel.cpp
-	$(CROSS) -o $(OBJDIR_KERNEL)/vga.elf -c $(KERNEL)/vga.cpp
+	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/kernel.elf -c $(KERNEL)/kernel.cpp
+	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/stdout.elf -c $(KERNEL)/hal/stdout.cpp
+	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/mem.elf -c $(KERNEL)/hal/mem.cpp
 	$(LD) -T $(KERNEL)/link.ld
 
 img:

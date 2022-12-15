@@ -8,7 +8,6 @@ INPUT(
     stage2.elf
     bootloader.elf
     io.elf
-    tty.elf
     pic.elf
     idt.elf
     mem.elf

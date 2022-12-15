@@ -1,5 +1,4 @@
 #include <io.hpp>
-#include <fonts.hpp>
 
 qword uptime = 0;
 
@@ -26,17 +25,6 @@ int strlen(const char* str){
         length++;
     return length;
 }
-
-void strcat(char* destination, char* source){
-    char* ptr = destination + strlen(destination);
-
-    while(*source)
-        *ptr++ = *source++;
-
-    *ptr = '\0';
-    return;
-}
-
 
 char integerToStringOutput[128];
 template<typename T>
@@ -70,35 +58,3 @@ const char* IntegerToString(T value) {
 	integerToStringOutput[isNegative + size + 1] = 0;
 	return integerToStringOutput;
 }
-
-char floatToStringOutput[128];
-const char* FloatToString(float value, byte decimalPlaces) {
-	char* intPtr = (char*)IntegerToString((int)value);
-	char* floatPtr = floatToStringOutput;
-
-	if (value < 0) {
-		value *= -1;
-	}
-
-	while (*intPtr != 0) {
-		*floatPtr = *intPtr;
-		intPtr++;
-		floatPtr++;
-	}
-	*floatPtr = '.';
-	floatPtr++;
-
-	float newValue = value - (int)value;
-
-	for (byte i = 0; i < decimalPlaces; i++) {
-		newValue *= 10;
-		*floatPtr = (int)newValue + 48;
-		newValue -= (int)newValue;
-		floatPtr++;
-	}
-
-	*floatPtr = 0;
-
-	return floatToStringOutput;
-}
-

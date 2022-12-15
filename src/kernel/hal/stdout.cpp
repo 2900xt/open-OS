@@ -1,5 +1,5 @@
-#include <types.hpp>
-#include <kernel/stdout.h>
+#include <types.h>
+#include <stdout.h>
 
 word screenX = 0, screenY = 0;
 byte* screenBuffer = (byte*)0xA0000;
@@ -23,7 +23,7 @@ void addCharIntoFont(char c, byte r1, byte r2 , byte r3, byte r4, byte r5, byte 
     font[c][7] = r8;
 }
 
-void putChar(char c){
+void putc(char c){
 
     if(screenX == SCREEN_WIDTH){
         screenX = 0;
@@ -36,6 +36,103 @@ void putChar(char c){
 
     screenX += 8;
     screenY -= 8;
+}
+
+void puts(const char* src){
+    while(*src != '\0'){
+        if(*src == '\n'){
+            screenY += 8;
+            screenX = 0;
+        } else {
+            putc(*src);
+        }
+
+        src++;
+    }
+}
+
+void printf(const char* fmt, ...){
+    if(fmt == NULL)
+        return;
+    
+    va_list valist;
+    va_start(valist, fmt);
+
+    int num = 0;
+    char* token = NULL;
+    int i = 0;
+    bool found = false;
+
+    while(fmt[i] != '\0'){
+        if((fmt[i] == '%'))
+        {
+            switch(fmt[i+1]){
+            case 'd':
+                {
+                    found = true;
+                    num = va_arg(valist, int);
+                    puts(IntegerToString(num));
+                }
+                break;
+            case 's':
+                {
+                    found = true;
+                    token = va_arg(valist, char*);
+                    puts(token);
+                }
+                break;
+            case 'c':
+                {
+                    found = true;
+                    num = va_arg(valist, int);
+                    outb(0x3c4, 0x02);
+                    outb(0x3c5, num & 0b00001111);
+                }
+                break;
+            case 'x':
+                {
+                    found = true;
+                    num = va_arg(valist, int);
+                    int ind = 1, j, temp;
+                    char base16[16];
+
+                    while(num != 0){
+                        temp = num % 16;
+                        if(temp < 10) temp = temp + 48;
+                        else temp = temp + 55;
+                        base16[ind++] = temp;
+                        num /= 16;
+                    }
+
+                    puts("0x");
+                    for(int j = ind - 1; j > 0; j--)
+                        putc(base16[j]);
+                    
+                    break;
+                }
+            }
+
+            if(found){
+                i += 2;
+                continue;
+            }
+
+        }
+
+        if(fmt[i] == '\n'){
+            screenY += 8;
+            screenX = 0;
+        }
+        else{
+            putc(fmt[i]);
+        }
+        
+        i++;
+
+    }
+
+    va_end(valist);
+    
 }
 
 void stdoutINIT(void) {
@@ -963,4 +1060,37 @@ void stdoutINIT(void) {
     0b00100000,
     0b00000000
     );
+}
+
+char integerToStringOutput[128];
+template<typename T>
+const char* IntegerToString(T value) {
+
+	byte isNegative = 0;
+
+	if (value < 0) {
+		isNegative = 1;
+		value *= -1;
+		integerToStringOutput[0] = '-';
+	}
+
+	byte size = 0;
+	qword sizeTester = (qword)value;
+	while (sizeTester / 10 > 0) {
+		sizeTester /= 10;
+		size++;
+	}
+
+	byte index = 0;
+	qword newValue = (qword)value;
+	while (newValue / 10 > 0) {
+		byte remainder = newValue % 10;
+		newValue /= 10;
+		integerToStringOutput[isNegative + size - index] = remainder + 48; 
+		index++;
+	}
+	byte remainder = newValue % 10;
+	integerToStringOutput[isNegative + size - index] = remainder + 48;
+	integerToStringOutput[isNegative + size + 1] = 0;
+	return integerToStringOutput;
 }
