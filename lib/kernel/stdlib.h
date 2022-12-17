@@ -10,5 +10,8 @@ void* kmalloc(qword size);
 void heapInit(qword heap_address, qword heap_length);
 void memset(void* start, qword value, qword num);
 void memcpy(void* destination, const void* source, qword num);
+void fillIDT(void);
+
+extern bool isrs[16];
 
 #endif

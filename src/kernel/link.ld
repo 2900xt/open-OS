@@ -8,6 +8,9 @@ INPUT(
     kernel.elf
     stdout.elf
     mem.elf
+    iobuf.elf
+    disk.elf
+    idt.elf
 )
 
 OUTPUT(

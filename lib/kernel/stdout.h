@@ -10,6 +10,8 @@ void stdoutINIT(void);
 void putc(char);
 void puts(const char*);
 void printf(const char*, ...);
+void kpanic(const char* msg);
+char* fprintf(const char* , ...);
 
 static inline void outb(word port, byte val){
     asm volatile("outb %0, %1" : : "a"(val), "Nd"(port));

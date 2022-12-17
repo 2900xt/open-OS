@@ -1,5 +1,6 @@
 #include <types.h>
 #include <stdout.h>
+#include <stdlib.h>
 
 word screenX = 0, screenY = 0;
 byte* screenBuffer = (byte*)0xA0000;
@@ -21,6 +22,11 @@ void addCharIntoFont(char c, byte r1, byte r2 , byte r3, byte r4, byte r5, byte 
     font[c][5] = r6;
     font[c][6] = r7;
     font[c][7] = r8;
+}
+
+void setColor(COLORS color){
+    outb(0x3c4, 0x02);
+    outb(0x3c5, (int)color & 0b00001111);
 }
 
 void putc(char c){
@@ -49,6 +55,14 @@ void puts(const char* src){
 
         src++;
     }
+}
+
+int strlen(const char* src){
+    int length = 0;
+    while(*src++ != '\0'){
+        length++;
+    }
+    return length;
 }
 
 void printf(const char* fmt, ...){
@@ -84,9 +98,8 @@ void printf(const char* fmt, ...){
             case 'c':
                 {
                     found = true;
-                    num = va_arg(valist, int);
-                    outb(0x3c4, 0x02);
-                    outb(0x3c5, num & 0b00001111);
+                    num = (int)va_arg(valist, COLORS);
+                    setColor((COLORS)num);
                 }
                 break;
             case 'x':
@@ -133,6 +146,110 @@ void printf(const char* fmt, ...){
 
     va_end(valist);
     
+}
+
+char* fprintf(const char* fmt , ...){
+    char* buffer = (char*)kcalloc(1, 512);
+
+    va_list valist;
+    va_start(valist, fmt);
+
+    int i = 0;
+    int ind = 0;
+    bool found = false;
+    char* token = NULL;
+
+    while(fmt[i] != '\0'){
+        if((fmt[i] == '%'))
+        {
+            switch(fmt[i+1]){
+            case 'd':
+                {
+                    found = true;
+                    int num = va_arg(valist, int);
+                    token = (char*)IntegerToString(num);
+                    memcpy(buffer + ind, token, strlen(token));
+                    ind += strlen(token);
+                }
+                break;
+            case 's':
+                {
+                    found = true;
+                    token = va_arg(valist, char*);
+                    memcpy(buffer + ind, token, strlen(token));
+                    ind += strlen(token);
+                }
+                break;
+            case 'x':
+                {
+                    found = true;
+                    int num = va_arg(valist, int);
+                    int index = 1, j, temp;
+                    char base16[16];
+
+                    while(num != 0){
+                        temp = num % 16;
+                        if(temp < 10) temp = temp + 48;
+                        else temp = temp + 55;
+                        base16[index++] = temp;
+                        num /= 16;
+                    }
+
+                    buffer[ind++] = '0';
+                    buffer[ind++] = 'x';
+
+                    for(int j = index - 1; j > 0; j--)
+                        buffer[ind++] = base16[j];
+                    
+                    break;
+                }
+            }
+            
+            if(found){
+                i += 2;
+                continue;
+            }
+
+        }
+
+        else{
+            buffer[ind] = fmt[i];
+            ind++;
+        }
+        
+        i++;
+
+    }
+
+    va_end(valist);
+
+    return buffer;
+
+}
+
+void kpanic(const char* msg){
+
+    __asm__("cli");
+
+    screenX = 0;
+    screenY = 0;
+
+    setColor(COLORS::BLUE);
+
+    for(int i = 0; i < (SCREEN_WIDTH *SCREEN_HEIGHT) / 64; i++){
+        putc('#');
+    }
+
+
+    screenX = 0;
+    screenY = 0;
+
+    setColor(COLORS::WHITE);
+
+    printf(msg);
+
+    for(;;);
+
 }
 
 void stdoutINIT(void) {
@@ -1041,24 +1158,14 @@ void stdoutINIT(void) {
     0b00000000
     );
     addCharIntoFont('#',
-    0b00000000,
-    0b00000000,
-    0b00101000,
-    0b01111100,
-    0b00101000,
-    0b01111100,
-    0b00101000,
-    0b00000000
-    );
-    addCharIntoFont('$',
-    0b00000000,    
-    0b00100000,
-    0b00100000,
-    0b00100000,
-    0b00100000,
-    0b00100000,
-    0b00100000,
-    0b00000000
+    0b11111111,    
+    0b11111111,
+    0b11111111,
+    0b11111111,
+    0b11111111,
+    0b11111111,
+    0b11111111,
+    0b11111111
     );
 }
 

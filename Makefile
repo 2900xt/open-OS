@@ -1,7 +1,7 @@
 CROSS = /usr/local/x86_64elfgcc/bin/x86_64-elf-g++
 LD = /usr/local/x86_64elfgcc/bin/x86_64-elf-ld -z max-page-size=0x1000
 CCFLAGS_BOOT = -Ttext 0x8000 -ffreestanding -mno-red-zone -m64 -Wwrite-strings -nostdlib -I lib/boot
-CCFLAGS_KERNEL = -Ttext 0x20000 -ffreestanding -mno-red-zone -m64 -Wwrite-strings -nostdlib -I lib/kernel
+CCFLAGS_KERNEL = -Ttext 0x20000 -ffreestanding -mno-red-zone -m64 -Wwrite-strings -nostdlib -I lib/kernel -mgeneral-regs-only
 
 BOOTLOADER = src/boot/amd64
 KERNEL = src/kernel
@@ -36,6 +36,9 @@ kernel:
 	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/kernel.elf -c $(KERNEL)/kernel.cpp
 	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/stdout.elf -c $(KERNEL)/hal/stdout.cpp
 	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/mem.elf -c $(KERNEL)/hal/mem.cpp
+	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/disk.elf -c $(KERNEL)/hal/disk.cpp
+	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/iobuf.elf -c $(KERNEL)/hal/iobuf.cpp
+	$(CROSS) $(CCFLAGS_KERNEL)  -fpermissive -o $(OBJDIR_KERNEL)/idt.elf -c $(KERNEL)/hal/idt.cpp 
 	$(LD) -T $(KERNEL)/link.ld
 
 img:

@@ -1,16 +1,6 @@
 #include <int.hpp>
 #include <io.hpp>
 
-typedef struct{
-    word offsetLow;
-    word selector;
-    byte IST;
-    byte flags;
-    word offsetMid;
-    dword offsetHigh;
-    dword zero;
-}__attribute__((packed)) IDT64;
-
 IDT64 _idt[256];
 
 extern "C" qword common_ISR;

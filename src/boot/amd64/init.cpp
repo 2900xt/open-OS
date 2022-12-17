@@ -10,7 +10,7 @@ extern "C" void setup64(){
     loadRoot();
 
 
-    void (*start)() = (void(*)()) loadFile("KERNEL  BIN");
+    void (*start)(void*) = (void(*)(void*)) loadFile("KERNEL  BIN");
 
-    start();
+    start(_idt);
 }                                                                                            
