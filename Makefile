@@ -37,7 +37,7 @@ kernel:
 	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/stdout.elf -c $(KERNEL)/hal/stdout.cpp
 	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/mem.elf -c $(KERNEL)/hal/mem.cpp
 	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/disk.elf -c $(KERNEL)/hal/disk.cpp
-	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/iobuf.elf -c $(KERNEL)/hal/iobuf.cpp
+	$(CROSS) $(CCFLAGS_KERNEL) -o $(OBJDIR_KERNEL)/iobuf.elf -c $(KERNEL)/fs/iobuf.cpp
 	$(CROSS) $(CCFLAGS_KERNEL)  -fpermissive -o $(OBJDIR_KERNEL)/idt.elf -c $(KERNEL)/hal/idt.cpp 
 	$(LD) -T $(KERNEL)/link.ld
 
