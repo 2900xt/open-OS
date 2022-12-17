@@ -227,6 +227,28 @@ char* fprintf(const char* fmt , ...){
 
 }
 
+void sleep(uint64_t millis){
+    countPIT = 0;
+    millis /= 10;
+    while(countPIT < millis);
+}
+
+void sleepRTC(uint16_t millis){
+    outb(0x70, 0x00);
+    uint16_t currentTime = inb(0x71);
+    outb(0x70, 0x02);
+    currentTime += inb(0x71);
+    uint16_t startTime = currentTime;
+    uint16_t elapsedTime = 0;
+    while(elapsedTime < millis){
+        elapsedTime = currentTime - startTime;
+        outb(0x70, 0x00);
+        currentTime = inb(0x71);
+        outb(0x70, 0x02);
+        currentTime += inb(0x71);
+    }
+}
+
 void kpanic(const char* msg){
 
     __asm__("cli");
@@ -247,6 +269,14 @@ void kpanic(const char* msg){
     setColor(COLORS::WHITE);
 
     printf(msg);
+
+    sleepRTC(200);
+
+    printf("\n\nPOWER OFF");
+
+    sleepRTC(20);
+
+    outw( 0xB004, 0x0 | 0x2000 );
 
     for(;;);
 

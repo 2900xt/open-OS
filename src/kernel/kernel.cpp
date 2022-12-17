@@ -7,7 +7,5 @@ extern "C" void _start(void) {
     heapInit(0x100000, 0x100000);
     fillIDT();
 
-    //int x = 0; int i = 1 / x;
-
     for(;;);
 }

@@ -4,13 +4,17 @@
 #include <stdarg.h>
 #include <types.h>
 
+extern uint64_t countPIT;
+
 template<typename T> const char* IntegerToString(T);
+
 
 void stdoutINIT(void);
 void putc(char);
 void puts(const char*);
 void printf(const char*, ...);
 void kpanic(const char* msg);
+void sleep(uint64_t millis);
 char* fprintf(const char* , ...);
 
 static inline void outb(word port, byte val){
@@ -21,6 +25,10 @@ static inline byte inb(word port){
     byte ret;
     asm volatile("inb %1, %0": "=a"(ret) : "Nd"(port));
     return ret;
+}
+
+static inline void outw(word port, word val){
+    asm volatile("outw %0, %1" : : "a"(val), "Nd"(port));
 }
 
 enum class COLORS{

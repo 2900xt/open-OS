@@ -20,6 +20,7 @@ typedef struct{
 
 IDT64* _idt;
 bool isrs[16];
+uint64_t countPIT = 0;
 
 const char* exceptionsList[] = {
     "Divide-by-zero Error",
@@ -55,6 +56,8 @@ const char* exceptionsList[] = {
 #define PIC_EOI	    0x20
 #define PIC2        0xA0
 #define PIC1        0x20
+#define PIC1_DATA	(PIC1+1)
+#define PIC2_DATA	(PIC2+1)
 
 
 void sendEOI(byte irq)
@@ -64,6 +67,34 @@ void sendEOI(byte irq)
     }
  
 	outb(PIC1, PIC_EOI);
+}
+
+void disableIRQ(byte IRQline) {
+    word port;
+    byte value;
+ 
+    if(IRQline < 8) {
+        port = PIC1_DATA;
+    } else {
+        port = PIC2_DATA;
+        IRQline -= 8;
+    }
+    value = inb(port) | (1 << IRQline);
+    outb(port, value);        
+}
+ 
+void enableIRQ(byte IRQline) {
+    word port;
+    byte value;
+ 
+    if(IRQline < 8) {
+        port = PIC1_DATA;
+    } else {
+        port = PIC2_DATA;
+        IRQline -= 8;
+    }
+    value = inb(port) & ~(1 << IRQline);
+    outb(port, value);        
 }
 
 static inline void lidt(void* base, uint16_t size)
@@ -91,7 +122,12 @@ void setIDTEntry(uint8_t vector, void (*isr)(...), byte type){
 
 //Interrupt Service Routines
 
-__attribute__ ((interrupt)) void isr0(interruptFrame* frame){isrs[0] = true;sendEOI(0);}
+__attribute__ ((interrupt)) void isr0(interruptFrame* frame){
+    countPIT++;
+    isrs[0] = true;
+    sendEOI(0);
+}
+
 __attribute__ ((interrupt)) void isr1(interruptFrame* frame){isrs[1] = true;sendEOI(1);}
 __attribute__ ((interrupt)) void isr2(interruptFrame* frame){isrs[2] = true;sendEOI(2);}
 __attribute__ ((interrupt)) void isr3(interruptFrame* frame){isrs[3] = true;sendEOI(3);}
@@ -184,6 +220,12 @@ void fillIDT(void){
     setIDTEntry(29, exc29, EXCEPTION);
     setIDTEntry(30, exc30, EXCEPTION);
     lidt(_idt, 128*256 - 1);
+
+
+    for(int i = 0; i < 16; i++){
+        enableIRQ(i);
+    }
+
     asm("sti");
 }
 
