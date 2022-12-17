@@ -149,7 +149,7 @@ void printf(const char* fmt, ...){
 }
 
 char* fprintf(const char* fmt , ...){
-    char* buffer = (char*)kcalloc(1, 512);
+    char* buffer = (char*)kcalloc(1, 1024);
 
     va_list valist;
     va_start(valist, fmt);
@@ -270,13 +270,13 @@ void kpanic(const char* msg){
 
     printf(msg);
 
-    sleepRTC(200);
+    sleepRTC(500);
 
     printf("\n\nPOWER OFF");
 
     sleepRTC(20);
 
-    outw( 0xB004, 0x0 | 0x2000 );
+    outw( 0xB004, 0x2000 );
 
     for(;;);
 

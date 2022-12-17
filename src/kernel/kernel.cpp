@@ -7,5 +7,8 @@ extern "C" void _start(void) {
     heapInit(0x100000, 0x100000);
     fillIDT();
 
+    int* ptr = (int*)0x100000000;
+    *ptr = 1;
+
     for(;;);
 }
