@@ -117,7 +117,6 @@ void printf(const char* fmt, ...){
                         num /= 16;
                     }
 
-                    puts("0x");
                     for(int j = ind - 1; j > 0; j--)
                         putc(base16[j]);
                     
@@ -194,9 +193,6 @@ char* fprintf(const char* fmt , ...){
                         base16[index++] = temp;
                         num /= 16;
                     }
-
-                    buffer[ind++] = '0';
-                    buffer[ind++] = 'x';
 
                     for(int j = index - 1; j > 0; j--)
                         buffer[ind++] = base16[j];

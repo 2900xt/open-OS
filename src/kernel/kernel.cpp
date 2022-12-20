@@ -7,8 +7,12 @@ extern "C" void _start(void) {
     heapInit(0x100000, 0x100000);
     fillIDT();
 
-    int* ptr = (int*)0x100000000;
-    *ptr = 1;
+    byte* data = (byte*)readSectors(0, 0, 1);
+
+    for(int i = 0; i < 512*2; i++){
+        printf("%x ", *data);
+        data++;
+    }
 
     for(;;);
 }

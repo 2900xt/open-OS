@@ -301,7 +301,7 @@ void FDCReset(byte drive){
     FDCalibrate(drive);
 }
 
-void FDCReadSector_CHS(byte drive ,byte cyl, byte head, byte sector, operation_data* out = new operation_data){
+void FDCReadSector_CHS(byte drive ,byte cyl, byte head, byte sector, operation_data* out){
     sense_interrupt_data data;
 
     setReadDMA();
@@ -334,4 +334,22 @@ void FDCReadSector_CHS(byte drive ,byte cyl, byte head, byte sector, operation_d
 
     FDDisableMotor(drive);
     return;
+}
+
+void readSector_int(byte drive, word LBA, void* buffer){
+    CHS chs;
+    operation_data data;
+    convertToCHS(LBA, &chs);
+    FDCReadSector_CHS(drive, chs.cyl, chs.head, chs.sector, &data);
+    memcpy(buffer, (void*)0x1000, 512);
+}
+
+byte* readSectors(byte drive, word startingLBA, word finishingLBA){
+    void* buffer = kcalloc(startingLBA - finishingLBA + 1, 512);
+    int bufferPtr = 0;
+    for(int currentLBA = startingLBA; currentLBA <= finishingLBA; currentLBA++){
+        readSector_int(drive, currentLBA, buffer + bufferPtr);
+        bufferPtr += 512;
+    }
+    return (byte*)buffer;
 }
